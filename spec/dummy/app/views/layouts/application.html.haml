@@ -1,0 +1,13 @@
+!!! 5
+%html
+  %head
+    %meta(charset="utf-8")
+    %title grapsi
+    = csrf_meta_tags
+
+    = graspi_stylesheet_link_tag('base/application')
+    = graspi_javascript_include_tag('base/application')
+
+  %body
+    #wrapper= yield
+

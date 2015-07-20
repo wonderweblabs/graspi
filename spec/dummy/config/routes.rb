@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
 
-  mount Graspi::Engine => "/graspi"
+  root to: 'pages#index'
+
 end
