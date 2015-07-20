@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Environment normalisation:
 /.bundle/
 /vendor/bundle
@@ -15,6 +16,9 @@ db/*.sqlite3-journal
 /log/*
 /tmp/
 /node_modules/
+*.gem
+*.rbc
+/.config
 /coverage/
 /InstalledFiles
 /pkg/
