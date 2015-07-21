@@ -1,0 +1,564 @@
+#
+# Specify the environments that will be compiled.
+# You can configure more environments. But the process will only run if
+# the environment is listed here.
+#
+environments:
+  - development
+
+#
+# Prepends the image and resource paths with the passed asset host.
+#
+# Default: ''
+assetHost: ''
+
+#
+# Graspi places files as "step between" in following folders. E.g.
+# compiled sass files and css files will be placed together there
+# before they'll be join to the destination path.
+#
+tmp:
+
+  # Default: 'tmp/grunt/css'
+  css: 'tmp/grunt/css'
+
+  # Default: 'tmp/grunt/js'
+  js: 'tmp/grunt/js'
+
+  # Default: 'tmp/grunt/images'
+  images: 'tmp/grunt/images'
+
+  # Default: 'tmp/grunt/asset_timestamps.json'
+  assetsTimestampsFile: 'tmp/grunt/asset_timestamps.json'
+
+#
+# >>> Bower package concatination
+#
+# Graspi can merge bower packages into certain result files.
+# Configuration is based on 'grunt-bower-concat'
+#
+bowerConcat:
+
+  # Define if bower package concatination should be active
+  #
+  # (true/false)
+  # Default: true
+  enabled: true
+
+  # https://github.com/sapegin/grunt-bower-concat#mainfiles.
+  #
+  # Default: []
+  #
+  # Example:
+  dependencies:
+    'underscore': 'jQuery'
+    'backbone': 'underscore'
+
+  # https://github.com/sapegin/grunt-bower-concat#mainfiles
+  #
+  # Default: []
+  #
+  # Example:
+  mainFiles:
+    'bourbon': 'bower_components/bourbon/app/assets/stylesheets/_bourbon.scss'
+    'neat': 'bower_components/bourbon/app/assets/stylesheets/_neat.scss'
+
+#
+# >>> Sass compilation
+#
+# Graspi compiles sass by using the 'grunt-contrib-sass' package.
+#
+cssSass:
+
+  # Define if sass compilation should be active
+  #
+  # (true/false)
+  # Default: true
+  enabed: true
+
+  # https://github.com/gruntjs/grunt-contrib-sass#trace
+  #
+  # Default: false
+  trace: false
+
+  # https://github.com/gruntjs/grunt-contrib-sass#cachelocation
+  #
+  # Default: 'tmp/grunt/sass_cache'
+  cacheLocation: 'tmp/grunt/sass_cache'
+
+  # https://github.com/gruntjs/grunt-contrib-sass#compass
+  #
+  # Default: false
+  compass: false
+
+  # https://github.com/gruntjs/grunt-contrib-sass#linenumbers
+  #
+  # Default: false
+  lineNumber: false
+
+  # https://github.com/gruntjs/grunt-contrib-sass#precision
+  #
+  # Default: 10
+  precision: 10
+
+  # https://github.com/gruntjs/grunt-contrib-sass#sourcemap
+  #
+  # Default: 'auto'
+  sourcemap: 'auto'
+
+  # https://github.com/gruntjs/grunt-contrib-sass#style
+  #
+  # Default: 'compressed'
+  style: 'compressed'
+
+  # https://github.com/gruntjs/grunt-contrib-sass#update
+  #
+  # Default: true
+  update: true
+
+  # https://github.com/gruntjs/grunt-contrib-sass#loadpath
+  #
+  # Default: []
+  loadPath: []
+
+#
+# >>> Css minification
+#
+# 'grunt-contrib-cssmin'
+# 'clean-css'
+#
+cssMinify:
+
+  # Define if css minification should be active
+  #
+  # (true/false)
+  # Default: false
+  enabled: false
+
+  # https://github.com/gruntjs/grunt-contrib-cssmin#report
+  #
+  # Default: 'min'
+  report: 'min'
+
+  # https://github.com/gruntjs/grunt-contrib-cssmin#sourcemap
+  #
+  # Default: true
+  sourceMap: true
+
+  # 'clean-css'
+  #
+  # https://github.com/jakubpawlowicz/clean-css#how-to-use-clean-css-programmatically
+  cleanCss:
+
+    # Default: false
+    advanced: false
+
+    # Default: false
+    aggressiveMerging: false
+
+    # Default: '*'
+    compatibility: '*'
+
+    # Default: false
+    keepBreaks: false
+
+    # Default: 0
+    keepSpecialComments: 0
+
+    # Default: true
+    mediaMerging: true
+
+    # Default: false
+    rebase: false
+
+    # Default: true
+    restructuring: true
+
+    # Default: -1
+    roundingPrecision: -1
+
+    # Default: false
+    semanticMerging: false
+
+    # Default: false
+    shorthandCompacting: false
+
+    # Default: false
+    sourceMapInlineSources: false
+
+#
+# >>> Coffee compilation
+#
+# Graspi compiles coffee by using the 'grunt-contrib-coffee' package.
+#
+jsCoffee:
+
+  # Define if coffee compilation should be active
+  #
+  # (true/false)
+  # Default: true
+  enabed: true
+
+  # https://github.com/gruntjs/grunt-contrib-coffee#bare
+  #
+  # Default: false
+  bare: false
+
+  # https://github.com/gruntjs/grunt-contrib-coffee#sourcemap
+  #
+  # Default: true
+  sourceMap: true
+
+#
+# >>> Js uglify
+#
+# 'grunt-contrib-cssmin'
+#
+jsUglify:
+
+  # Define if js uglification should be active
+  #
+  # (true/false)
+  # Default: false
+  enabled: false
+
+  # https://github.com/gruntjs/grunt-contrib-uglify#report
+  #
+  # Default: 'min'
+  report: 'min'
+
+  # https://github.com/gruntjs/grunt-contrib-uglify#sourcemap
+  #
+  # Default: true
+  sourceMap: true
+
+  options:
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#mangle
+    #
+    # Default: false
+    mangle: false
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#beautify
+    #
+    # Default: false
+    beautify: false
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#maxlinelen
+    #
+    # Default: 32000
+    maxLineLen: 32000
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#asciionly
+    #
+    # Default: false
+    ASCIIOnly: false
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#exportall
+    #
+    # Default: false
+    exportAll: false
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#preservecomments
+    #
+    # Default: 'some'
+    preserveComments: 'some'
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#banner
+    #
+    # Default: ''
+    banner: ''
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#footer
+    #
+    # Default: ''
+    footer: ''
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#screwie8
+    #
+    # Default: false
+    screwIE8: false
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#mangleproperties
+    #
+    # Default: false
+    mangleProperties: false
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#reservedomproperties
+    #
+    # Default: false
+    reserveDOMProperties: false
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#namecache
+    #
+    # Default: 'tmp/grunt/coffee_mangle_cache.json'
+    nameCache: 'tmp/grunt/coffee_mangle_cache.json'
+
+    # https://github.com/gruntjs/grunt-contrib-uglify#quotestyle
+    #
+    # Default: 0
+    quoteStyle: 0
+
+#
+# >>> Image minification
+#
+# 'grunt-contrib-imagemin'
+#
+imageMin:
+
+  # Define if image minification should be active
+  #
+  # (true/false)
+  # Default: true
+  enabed: true
+
+  # https://github.com/gruntjs/grunt-contrib-imagemin#optimizationlevel-png
+  #
+  # Default: 0
+  optimizationLevel: 0
+
+  # https://github.com/gruntjs/grunt-contrib-imagemin#interlaced-gif
+  #
+  # Default: false
+  interlaced: false
+
+  # https://github.com/gruntjs/grunt-contrib-imagemin#progressive-jpg
+  #
+  # Default: false
+  progressive: false
+
+  # https://github.com/imagemin/imagemin-jpeg-recompress
+  jpegRecompressPlugin:
+
+    # Define if image minification should be active
+    #
+    # (true/false)
+    # Default: false
+    enabled: false
+
+    # https://github.com/imagemin/imagemin-jpeg-recompress#optionsloops
+    loops: 6
+
+    # https://github.com/imagemin/imagemin-jpeg-recompress#optionsaccurate
+    accurate: true
+
+    # https://github.com/imagemin/imagemin-jpeg-recompress#optionsquality
+    quality: 'veryhigh'
+
+    # https://github.com/imagemin/imagemin-jpeg-recompress#optionsmethod
+    method: 'ssim'
+
+    # https://github.com/imagemin/imagemin-jpeg-recompress#optionstarget
+    target: 0.9999
+
+    # https://github.com/imagemin/imagemin-jpeg-recompress#optionsmin
+    min: 60
+
+    # https://github.com/imagemin/imagemin-jpeg-recompress#optionsmax
+    max: 99
+
+    # https://github.com/imagemin/imagemin-jpeg-recompress#optionsdefish
+    defish: 0
+
+    # https://github.com/imagemin/imagemin-jpeg-recompress#optionsprogressive
+    progressive: true
+
+    # https://github.com/imagemin/imagemin-jpeg-recompress#optionssubsample
+    subsample: 'default'
+
+#
+# >>> File revision creation
+#
+# Creates revisions of the files in the final folder.
+#
+filerevision:
+
+  # Define if file revisioning should be active
+  #
+  # (true/false)
+  # Default: false
+  enabled: false
+
+  # Mapping entry substitution.
+  #
+  # The mapping of the revisioned files is based on the root directory, for example:
+  #   'public/assets/g-dev/base/application.js': 'public/assets/g-dev/base/application.[hash].js'
+  #
+  # Later on, the fetching is done by the base path:
+  #   'base/application.js'
+  #
+  # So it must be substituted to:
+  #   'base/application.js': 'public/assets/g-dev/base/application.[hash].js'
+  #
+  # Default:
+  #   fileReplacePattern:
+  #     pattern: '^(\/)?public\/assets\/g\-development(\/)?'
+  #     replace: ''
+  #   pathReplacePattern:
+  #     pattern: '^(\/)?public\/'
+  #     replace: ''
+  #
+  fileReplacePattern:
+    pattern: '^(\/)?public\/assets\/g\-development(\/)?'
+    replace: ''
+  pathReplacePattern:
+    pattern: '^(\/)?public\/'
+    replace: ''
+
+  # If the manifest should be formatted.
+  #
+  # Default: manifest.prettyPrint: true
+  manifest:
+    prettyPrint: true
+
+#
+# >>> Manifest file generation.
+#
+# The manifest file is the final asset-pseudo-name <> path mapping
+# for all normal and compiled assets. E.g. the rails and the
+# middleman helpers to include a graspi stylesheet will use this
+# mapping file.
+#
+manifest:
+
+  # Define if manifest file should be created
+  #
+  # (true/false)
+  # Default: true
+  enabled: true
+
+  # If the manifest should be formatted.
+  #
+  # Default: true
+  prettyPrint: true
+
+  # The final asset mapping manifest file.
+  #
+  # Default: 'public/assets/g-assets.json'
+  path: 'public/assets/g-assets.json'
+
+  #
+  pathReplacePattern:
+    pattern: '^(\/)?public\/'
+    replace: ''
+
+#
+# >>> Example app configs and environment overwrites
+#
+# Example apps: base, common, test
+#
+apps:
+  base:
+    bowerConcat:
+      include:
+        - jQuery
+        - json2
+        - underscore
+        - backbone
+        - normalize.css
+    cssSass:
+      enabled: true
+    cssMinify:
+      enabled: false
+    jsCoffee:
+      enabled: true
+    jsUglify:
+      enabled: false
+    config:
+      css:
+        basePath: 'app/assets/stylesheets'
+        destFile: 'base/application.css'
+        files:
+          sassFiles:
+            - 'base/application.sass'
+          cssFiles:
+            - 'base/base.css'
+      js:
+        basePath: 'app/assets/javascripts'
+        destFile: 'base/application.js'
+        files:
+          jsFiles:
+            - 'base/{,*/}*.js'
+          coffeeFiles:
+            - 'base/{,*/}*.coffee'
+      images:
+        basePath: 'app/assets/images'
+        destFolder: 'base'
+        files:
+          imageFiles:
+            - 'base/{,*/}*'
+  common:
+    bowerConcat:
+      include:
+        - jQuery
+    jsCoffee:
+      enabled: true
+    jsUglify:
+      enabled: true
+    imageMin:
+      optimizationLevel: 3
+      interlaced: true
+      progressive: true
+      jpegRecompressPlugin:
+        enabled: true
+        loops: 12
+        quality: 'medium'
+        target: 0.6
+        min: 55
+        max: 65
+        progressive: true
+    filerevision:
+      enabled: true
+    assetHost: 'http://localhost:3000/'
+    config:
+      css:
+        basePath: 'engines/common/app/assets/stylesheets'
+        destFile: 'common/application.css'
+        files:
+          sassFiles:
+            - 'common/application.sass'
+      js:
+        basePath: 'engines/common/app/assets/javascripts'
+        destFile: 'common/application.js'
+        files:
+          jsFiles:
+            - 'common/{,*/}*.js'
+          coffeeFiles:
+            - 'common/{,*/}*.coffee'
+      images:
+        basePath: 'engines/common/app/assets/images'
+        destFolder: 'common'
+        files:
+          imageFiles:
+            - 'common/{,*/}*'
+  test:
+    bowerConcat:
+      include:
+        - normalize.css
+    cssSass:
+      enabled: true
+    cssMinify:
+      enabled: true
+      report: 'min'
+      sourceMap: true
+      cleanCss:
+        advanced: true
+    filerevision:
+      enabled: true
+      manifest:
+        prettyPrint: true
+    config:
+      css:
+        basePath: 'app/assets/stylesheets'
+        destFile: 'test/application.css'
+
+development:
+  apps:
+    base:
+      config:
+        css:
+          destPath: 'public/assets/g-development'
+        js:
+          destPath: 'public/assets/g-development'
+        images:
+          destPath: 'public/assets/g-development'

@@ -1,0 +1,90 @@
+environments:
+  - development
+
+assetHost: 'localhost:3000'
+
+tmp:
+  css: 'spec/dummy/tmp/grunt/css'
+  js: 'spec/dummy/tmp/grunt/js'
+  images: 'spec/dummy/tmp/grunt/images'
+  assetsTimestampsFile: 'spec/dummy/tmp/grunt/asset_timestamps.json'
+
+bowerConcat:
+  dependencies:
+    'underscore': 'jQuery'
+    'backbone': 'underscore'
+  mainFiles:
+    'bourbon': 'bower_components/bourbon/app/assets/stylesheets/_bourbon.scss'
+    'neat': 'bower_components/bourbon/app/assets/stylesheets/_neat.scss'
+
+cssSass:
+  cacheLocation: 'spec/dummy/tmp/grunt/sass_cache'
+  loadPath:
+    - 'bower_components/bourbon/app/assets/stylesheets'
+    - 'bower_components/neat/app/assets/stylesheets'
+
+jsUglify:
+  options:
+    nameCache: 'spec/dummy/tmp/grunt/coffee_mangle_cache.json'
+
+filerevision:
+  fileReplacePattern:
+    pattern: '^(\/)?public\/assets\/g\-development(\/)?'
+    replace: ''
+  pathReplacePattern:
+    pattern: '^(\/)?public\/'
+    replace: ''
+
+manifest:
+  path: 'spec/dummy/public/assets/g-assets.json'
+  pathReplacePattern:
+    pattern: '^(\/)?public\/'
+    replace: ''
+
+apps:
+  base:
+    bowerConcat:
+      include:
+        - jQuery
+        - json2
+        - underscore
+        - backbone
+        - normalize.css
+    cssSass:
+      enabled: true
+    cssMinify:
+      enabled: false
+    jsCoffee:
+      enabled: true
+    jsUglify:
+      enabled: false
+    config:
+      css:
+        basePath: 'spec/dummy/app/assets/stylesheets'
+        destFile: 'base/application.css'
+        files:
+          sassFiles:
+            - 'base/application.sass'
+      js:
+        basePath: 'spec/dummy/app/assets/javascripts'
+        destFile: 'base/application.js'
+        files:
+          coffeeFiles:
+            - 'base/{,*/}*.coffee'
+      images:
+        basePath: 'spec/dummy/app/assets/images'
+        destFolder: 'base'
+        files:
+          imageFiles:
+            - 'base/{,*/}*'
+
+development:
+  apps:
+    base:
+      config:
+        css:
+          destPath: 'spec/dummy/public/assets/g-development'
+        js:
+          destPath: 'spec/dummy/public/assets/g-development'
+        images:
+          destPath: 'spec/dummy/public/assets/g-development'
