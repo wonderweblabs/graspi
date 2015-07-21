@@ -28,6 +28,9 @@ tmp:
   # Default: 'tmp/grunt/images'
   images: 'tmp/grunt/images'
 
+  # Default: 'tmp/grunt/filerevision'
+  filerevision: 'tmp/grunt/filerevision'
+
   # Default: 'tmp/grunt/asset_timestamps.json'
   assetsTimestampsFile: 'tmp/grunt/asset_timestamps.json'
 
@@ -91,15 +94,25 @@ cssSass:
   # Default: false
   compass: false
 
+  # https://github.com/gruntjs/grunt-contrib-sass#debuginfo
+  #
+  # Default: false
+  debugInfo: false
+
   # https://github.com/gruntjs/grunt-contrib-sass#linenumbers
   #
   # Default: false
-  lineNumber: false
+  lineNumbers: false
 
   # https://github.com/gruntjs/grunt-contrib-sass#precision
   #
   # Default: 10
   precision: 10
+
+  # https://github.com/gruntjs/grunt-contrib-sass#quiet
+  #
+  # Default: false
+  quiet: false
 
   # https://github.com/gruntjs/grunt-contrib-sass#sourcemap
   #
@@ -261,8 +274,8 @@ jsUglify:
 
     # https://github.com/gruntjs/grunt-contrib-uglify#preservecomments
     #
-    # Default: 'some'
-    preserveComments: 'some'
+    # Default: 'all'
+    preserveComments: 'all'
 
     # https://github.com/gruntjs/grunt-contrib-uglify#banner
     #
@@ -379,32 +392,6 @@ filerevision:
   # Default: false
   enabled: false
 
-  # Mapping entry substitution.
-  #
-  # The mapping of the revisioned files is based on the root directory, for example:
-  #   'public/assets/g-dev/base/application.js': 'public/assets/g-dev/base/application.[hash].js'
-  #
-  # Later on, the fetching is done by the base path:
-  #   'base/application.js'
-  #
-  # So it must be substituted to:
-  #   'base/application.js': 'public/assets/g-dev/base/application.[hash].js'
-  #
-  # Default:
-  #   fileReplacePattern:
-  #     pattern: '^(\/)?public\/assets\/g\-development(\/)?'
-  #     replace: ''
-  #   pathReplacePattern:
-  #     pattern: '^(\/)?public\/'
-  #     replace: ''
-  #
-  fileReplacePattern:
-    pattern: '^(\/)?public\/assets\/g\-development(\/)?'
-    replace: ''
-  pathReplacePattern:
-    pattern: '^(\/)?public\/'
-    replace: ''
-
   # If the manifest should be formatted.
   #
   # Default: manifest.prettyPrint: true
@@ -437,6 +424,21 @@ manifest:
   # Default: 'public/assets/g-assets.json'
   path: 'public/assets/g-assets.json'
 
+  # Mapping entry substitution.
+  #
+  # The mapping of the revisioned files is based on the root directory, for example:
+  #   'public/assets/g-dev/base/application.js': 'public/assets/g-dev/base/application.[hash].js'
+  #
+  # Later on, the fetching is done by the base path:
+  #   'base/application.js'
+  #
+  # So it must be substituted to:
+  #   'base/application.js': 'public/assets/g-dev/base/application.[hash].js'
+  #
+  # Default:
+  #   pathReplacePattern:
+  #     pattern: '^(\/)?public\/'
+  #     replace: ''
   #
   pathReplacePattern:
     pattern: '^(\/)?public\/'

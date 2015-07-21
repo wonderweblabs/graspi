@@ -6,10 +6,11 @@ tc          = {}
 tc.trackers = {}
 
 module.exports = (grunt, eac) ->
-  tc.trackers[eac.env_name] or= {}
-  tc.trackers[eac.env_name][eac.app_name] or= new ChangeTracker(grunt, eac)
+  f = eac.appConfig.tmp.assetsTimestampsFile
 
-  return tc.trackers[eac.env_name][eac.app_name]
+  tc.trackers[f] or= new ChangeTracker(grunt, eac)
+
+  return tc.trackers[f]
 
 class ChangeTracker
 

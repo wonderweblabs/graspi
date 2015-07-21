@@ -3,7 +3,6 @@ module.exports = (grunt) ->
   taskRunner  = require('../util/task_runner')(grunt)
   eai         = require('../util/env_app_iterator')(grunt)
 
-
   grunt.registerTask 'graspi_image_min', (t1, t2) ->
     taskRunner.runGruntTask @options().configFile, 'graspi_image_min_copy', t1, t2
     taskRunner.runGruntTask @options().configFile, 'graspi_image_min_imagemin', t1, t2

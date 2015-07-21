@@ -4,7 +4,7 @@ module.exports = class TaskHelper extends require('./abstract')
     'svgmin'
 
   getGruntTaskTarget: ->
-    "wwl-image-min-svgmin-#{super()}"
+    "graspi-image-min-svgmin-#{super()}"
 
   isEnabled: ->
     return false unless super() == true

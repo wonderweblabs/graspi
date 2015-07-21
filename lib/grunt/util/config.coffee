@@ -28,6 +28,7 @@ class GraspiConfig
       css:            'tmp/grunt/css'
       js:             'tmp/grunt/js'
       images:         'tmp/grunt/images'
+      filerevision:   'tmp/grunt/filerevision'
       filerev:        'tmp/grunt/filerev'
     bowerConcat:
       enabled:        true
@@ -39,9 +40,11 @@ class GraspiConfig
       enabed:         true
       trace:          false
       compass:        false
+      debugInfo:      false
       lineNumbers:    false
       cacheLocation:  'tmp/grunt/sass_cache'
       precision:      10
+      quiet:          false
       sourcemap:      'auto'
       style:          'compressed'
       update:         true
@@ -78,7 +81,7 @@ class GraspiConfig
         maxLineLen:           32000
         ASCIIOnly:            false
         exportAll:            false
-        preserveComments:     'some'
+        preserveComments:     'all'
         banner:               ''
         footer:               ''
         screwIE8:             false
@@ -105,18 +108,15 @@ class GraspiConfig
         subsample:      'default'
     filerevision:
       enabled: false
-      fileReplacePattern:
-        pattern: '^(\/)?public\/assets\/g\-development(\/)?'
-        replace: ''
-      pathReplacePattern:
-        pattern: '^(\/)?public\/'
-        replace: ''
       manifest:
         prettyPrint: true
     manifest:
       enabled:      true
       prettyPrint:  true
       path:         'public/assets/g-assets.json'
+      fileReplacePattern:
+        pattern: '^(\/)?public\/assets\/g\-development(\/)?'
+        replace: ''
       pathReplacePattern:
         pattern: '^(\/)?public\/'
         replace: ''

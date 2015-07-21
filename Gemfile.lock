@@ -148,6 +148,7 @@ GEM
     rspec-support (3.3.0)
     ruby_parser (3.7.0)
       sexp_processor (~> 4.1)
+    sass (3.4.16)
     sexp_processor (4.6.0)
     sprockets (3.2.0)
       rack (~> 1.0)
@@ -187,6 +188,7 @@ DEPENDENCIES
   quiet_assets
   rails (~> 4.2.3)
   rspec-rails
+  sass
   sqlite3
   therubyracer
   thin

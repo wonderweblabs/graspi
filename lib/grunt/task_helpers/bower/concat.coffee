@@ -4,7 +4,7 @@ module.exports = class TaskHelper extends require('./abstract')
     'bower_concat'
 
   getGruntTaskTarget: ->
-    "wwl-bower-concat-#{super()}"
+    "graspi-bower-concat-#{super()}"
 
   isEnabled: ->
     return false unless super() == true

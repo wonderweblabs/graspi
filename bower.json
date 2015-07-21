@@ -9,11 +9,15 @@
   "dependencies": {
     "bourbon": "~4.2.3",
     "neat": "~1.7.2",
-    "jQuery": "~2.1.4",
+    "jquery": "~2.1.4",
     "normalize.css": "~3.0.3",
     "underscore": "~1.8.3",
     "json2": "*",
     "backbone": "~1.2.1",
-    "jquery": "~2.1.4"
+    "bootstrap": "~3.3.5",
+    "css-social-buttons": "~1.1.1",
+    "marionette": "~2.4.2",
+    "css-reset": "~2.5.1",
+    "requirejs": "~2.1.19"
   }
 }

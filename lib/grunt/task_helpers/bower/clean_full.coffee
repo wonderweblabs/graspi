@@ -4,7 +4,7 @@ module.exports = class TaskHelper extends require('./abstract')
     'clean'
 
   getGruntTaskTarget: ->
-    "wwl-bower-clean-#{super()}"
+    "graspi-bower-clean-#{super()}"
 
   buildConfig: ->
     cfg     = {}
@@ -16,5 +16,4 @@ module.exports = class TaskHelper extends require('./abstract')
     if @_.isObject(@eac.appConfig.config.css)
       cfg.src.push "#{@eac.appConfig.tmp.css}/#{@eac.appConfig.config.css.destFile}/1_bower.css"
 
-    console.log cfg
     cfg

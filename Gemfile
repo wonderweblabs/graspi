@@ -13,6 +13,8 @@ gemspec
 # view libs
 gem 'therubyracer', platforms: :ruby
 
+gem 'sass'
+
 # dev
 group :development do
 
