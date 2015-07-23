@@ -1,0 +1,10 @@
+- content_for :stylesheet_includes do
+  = graspi_stylesheet_link_tag('mixed/application')
+
+- content_for :javascript_includes do
+  = graspi_javascript_include_tag('mixed/application')
+
+- content_for :content do
+  = yield
+
+= render :template => 'layouts/application'

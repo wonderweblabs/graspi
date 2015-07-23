@@ -120,6 +120,122 @@ class GraspiConfig
       pathReplacePattern:
         pattern: '^(\/)?public\/'
         replace: ''
+    watch:
+      enabled: true
+      options:
+        livereload:   35729
+        spawn:        false
+        reload:       false
+      gruntfile:
+        files: ['Gruntfile.coffee']
+    browserSync:
+      enabled:      true
+      bsFiles:      {}
+      options:
+        watchTask:      true
+        ui:
+          port:           3001
+          weinre:
+            port:           8080
+        server:         false
+        proxy:          false
+        port:           3002
+        https:          undefined
+        ghostMode:
+          clicks:         true
+          scroll:         true
+          forms:
+            submit:         true
+            inputs:         true
+            toggles:        true
+        logLevel:       'info'
+        logPrefix:      'BS'
+        logConnections: false
+        logFileChanges: true
+        logSnippet:     true
+        snippetOptions:
+          async:          true
+          whitelist:      []
+          blacklist:      []
+          rule:
+            match:          /<body[^>]*>/i
+            fn: (snippet, match) ->
+              match + snippet
+        rewriteRules:   false
+        tunnel:         null
+        online:         null
+        open:           false
+        browser:        'default'
+        xip:            false
+        reloadOnRestart: false
+        notify:         true
+        scrollProportionally: true
+        scrollThrottle: 0
+        scrollRestoreTechnique: 'window.name'
+        reloadDelay:    0
+        reloadDebounce: 0
+        plugins:        []
+        injectChanges:  true
+        startPath:      null
+        minify:         true
+        host:           null
+        codeSync:       true
+        timestamps:     true
+        scriptPath:     undefined
+        socket:
+          path:           '/browser-sync/socket.io'
+          clientPath:     '/browser-sync'
+          namespace:      '/browser-sync'
+          domain:         undefined
+          clients:
+            heartbeatTimeout: 5000
+
+    tasks:
+      gt_stylesheets: [
+        'graspi_css_copy'
+        'graspi_css_sass_compile'
+        'graspi_css_concat'
+        'graspi_css_minify'
+        'graspi_filerev'
+        'graspi_manifest'
+        'graspi_css_replace_urls'
+      ]
+      gt_css: [
+        'graspi_css_copy'
+        'graspi_css_concat'
+        'graspi_css_minify'
+        'graspi_filerev'
+        'graspi_manifest'
+        'graspi_css_replace_urls'
+      ]
+      gt_sass: [
+        'graspi_css_sass_compile'
+        'graspi_css_concat'
+        'graspi_css_minify'
+        'graspi_filerev'
+        'graspi_manifest'
+        'graspi_css_replace_urls'
+      ]
+      gt_scripts: [
+        'graspi_js_copy'
+        'graspi_js_coffee_compile'
+        'graspi_js_concat'
+        'graspi_js_uglify'
+      ]
+      gt_js: [
+        'graspi_js_copy'
+        'graspi_js_concat'
+        'graspi_js_uglify'
+      ]
+      gt_coffee: [
+        'graspi_js_coffee_compile'
+        'graspi_js_concat'
+        'graspi_js_uglify'
+      ]
+
+
+  getBaseConfig: ->
+    @baseConfig or= {}
 
   getConfig: ->
     @configObject or= {}
@@ -147,6 +263,7 @@ class GraspiConfig
     resultConfig  = {}
     configYaml    = @getYamlFileConfig()
     baseConfig    = _.mergeRecursive(@getDefaults(), configYaml)
+    @baseConfig   = _.mergeRecursive(@getDefaults(), configYaml)
 
     _.each baseConfig.environments, (env) =>
       delete baseConfig[env]

@@ -445,6 +445,250 @@ manifest:
     replace: ''
 
 #
+# Default:
+#
+tasks:
+  gt_stylesheets:
+    - graspi_css_copy
+    - graspi_css_sass_compile
+    - graspi_css_concat
+    - graspi_css_minify
+    - graspi_filerev
+    - graspi_manifest
+    - graspi_css_replace_urls
+  gt_css:
+    - graspi_css_copy
+    - graspi_css_concat
+    - graspi_css_minify
+    - graspi_filerev
+    - graspi_manifest
+    - graspi_css_replace_urls
+  gt_sass:
+    - graspi_css_sass_compile
+    - graspi_css_concat
+    - graspi_css_minify
+    - graspi_filerev
+    - graspi_manifest
+    - graspi_css_replace_urls
+  gt_scripts:
+    - graspi_js_copy
+    - graspi_js_coffee_compile
+    - graspi_js_concat
+    - graspi_js_uglify
+  gt_js:
+    - graspi_js_copy
+    - graspi_js_concat
+    - graspi_js_uglify
+  gt_coffee:
+    - graspi_js_coffee_compile
+    - graspi_js_concat
+    - graspi_js_uglify
+  gt_images:
+    - graspi_image_min
+    - graspi_filerev
+    - graspi_manifest
+    - graspi_css_concat
+    - graspi_css_minify
+    - graspi_filerev
+    - graspi_manifest
+    - graspi_css_replace_urls
+
+#
+#
+#
+watch:
+  enabled: true
+  groups: []
+  options:
+    livereload: 35729
+    spawn: false
+    reload: false
+
+#
+#
+#
+browserSync:
+  enabled: true
+  bsFiles:
+    src: []
+  options:
+
+    # http://www.browsersync.io/docs/grunt/
+    watchTask: true
+    notify: true
+
+    # http://www.browsersync.io/docs/options/#option-ui
+    #
+    # Default: (like at docs)
+    # ui:
+
+    # http://www.browsersync.io/docs/options/#option-server
+    #
+    # Default: false
+    server: false
+
+    # http://www.browsersync.io/docs/options/#option-proxy
+    #
+    # Default: false
+    proxy: false
+
+    # http://www.browsersync.io/docs/options/#option-port
+    #
+    # Default: 3002
+    port: 3002
+
+    # http://www.browsersync.io/docs/options/#option-https
+    #
+    # Default: undefined
+    # https: undefined
+
+    # http://www.browsersync.io/docs/options/#option-ghostMode
+    #
+    # Default: (like at docs)
+    # ghostMode:
+
+    # http://www.browsersync.io/docs/options/#option-logLevel
+    #
+    # Default: 'info'
+    logLevel: 'info'
+
+    # http://www.browsersync.io/docs/options/#option-logPrefix
+    #
+    # Default: 'BS'
+    logPrefix: 'BS'
+
+    # http://www.browsersync.io/docs/options/#option-logConnections
+    #
+    # Default: false
+    logConnections: false
+
+    # http://www.browsersync.io/docs/options/#option-logFileChanges
+    #
+    # Default: true
+    logFileChanges: true
+
+    # http://www.browsersync.io/docs/options/#option-logSnippet
+    #
+    # Default: true
+    logSnippet: true
+
+    # http://www.browsersync.io/docs/options/#option-snippetOptions
+    #
+    # Default: (like at docs)
+    # snippetOptions:
+
+    # http://www.browsersync.io/docs/options/#option-rewriteRules
+    #
+    # Default: false
+    rewriteRules: false
+
+    # http://www.browsersync.io/docs/options/#option-tunnel
+    #
+    # Default: null
+    # tunnel: null
+
+    # http://www.browsersync.io/docs/options/#option-online
+    #
+    # Default: null
+    # online: null
+
+    # http://www.browsersync.io/docs/options/#option-open
+    #
+    # Default: false
+    open: false
+
+    # http://www.browsersync.io/docs/options/#option-browser
+    #
+    # Default: 'default'
+    browser: 'default'
+
+    # http://www.browsersync.io/docs/options/#option-xip
+    #
+    # Default: false
+    xip: false
+
+    # http://www.browsersync.io/docs/options/#option-reloadOnRestart
+    #
+    # Default: false
+    reloadOnRestart: false
+
+    # http://www.browsersync.io/docs/options/#option-notify
+    #
+    # Default: true
+    notify: true
+
+    # http://www.browsersync.io/docs/options/#option-scrollProportionally
+    #
+    # Default: true
+    scrollProportionally: true
+
+    # http://www.browsersync.io/docs/options/#option-scrollThrottle
+    #
+    # Default: 0
+    scrollThrottle: 0
+
+    # http://www.browsersync.io/docs/options/#option-scrollRestoreTechnique
+    #
+    # Default: 'window.name'
+    scrollRestoreTechnique: 'window.name'
+
+    # http://www.browsersync.io/docs/options/#option-reloadDelay
+    #
+    # Default: 0
+    reloadDelay: 0
+
+    # http://www.browsersync.io/docs/options/#option-reloadDebounce
+    #
+    # Default: 0
+    reloadDebounce: 0
+
+    # http://www.browsersync.io/docs/options/#option-plugins
+    #
+    # Default: []
+    plugins: []
+
+    # http://www.browsersync.io/docs/options/#option-injectChanges
+    #
+    # Default: true
+    injectChanges: true
+
+    # http://www.browsersync.io/docs/options/#option-startPath
+    #
+    # Default: null
+    # startPath: null
+
+    # http://www.browsersync.io/docs/options/#option-minify
+    #
+    # Default: true
+    minify: true
+
+    # http://www.browsersync.io/docs/options/#option-host
+    #
+    # Default: null
+    # host: null
+
+    # http://www.browsersync.io/docs/options/#option-codeSync
+    #
+    # Default: true
+    codeSync: true
+
+    # http://www.browsersync.io/docs/options/#option-timestamps
+    #
+    # Default: true
+    timestamps: true
+
+    # http://www.browsersync.io/docs/options/#option-scriptPath
+    #
+    # Default:
+    # scriptPath: undefined
+
+    # http://www.browsersync.io/docs/options/#option-socket
+    #
+    # Default: (like at doc)
+    # socket:
+
+
+#
 # >>> Example app configs and environment overwrites
 #
 # Example apps: base, common, test
@@ -466,6 +710,38 @@ apps:
       enabled: true
     jsUglify:
       enabled: false
+    watch:
+      groups:
+        css:
+          files:
+            - 'spec/dummy/app/assets/stylesheets/base/**/*.css'
+          tasks:
+            - gt_css
+        sass:
+          files:
+            - 'spec/dummy/app/assets/stylesheets/base/**/*.sass'
+            - 'spec/dummy/app/assets/stylesheets/base/**/*.scss'
+          tasks:
+            - gt_sass
+        js:
+          files:
+            - 'spec/dummy/app/assets/javascripts/base/**/*.js'
+          tasks:
+            - gt_js
+        coffee:
+          files:
+            - 'spec/dummy/app/assets/javascripts/base/**/*.coffee'
+          tasks:
+            - gt_coffee
+        images:
+          files:
+            - 'spec/dummy/app/assets/images/base/**/*'
+          task:
+            - gt_images
+    browserSync:
+      bsFiles:
+        src:
+          - 'spec/dummy/public/assets/public/assets/g-development/base/**/*.css'
     config:
       css:
         basePath: 'app/assets/stylesheets'

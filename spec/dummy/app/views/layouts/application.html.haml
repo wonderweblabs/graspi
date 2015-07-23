@@ -5,9 +5,9 @@
     %title grapsi
     = csrf_meta_tags
 
-    = graspi_stylesheet_link_tag('base/application')
-    = graspi_javascript_include_tag('base/application')
+    = yield(:stylesheet_includes)
+    = yield(:javascript_includes)
 
   %body
-    #wrapper= yield
+    #wrapper= yield(:content)
 

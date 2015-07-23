@@ -18,7 +18,7 @@ module.exports = class TaskHelper extends require('./abstract')
 
   getManifestMapping: ->
     try
-      mapping = @grunt.file.readJSON(@getConfig().manifest.path)
+      mapping = @g.file.readJSON(@getConfig().manifest.path)
     mapping or= {}
 
     mapping[@eac.env_name] || {}

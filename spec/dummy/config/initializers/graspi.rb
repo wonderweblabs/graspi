@@ -1,0 +1,1 @@
+Graspi.config_file = File.join(File.dirname(__FILE__), '../../../../graspi.yml')

@@ -16,6 +16,15 @@ module.exports = class TaskHelper extends require('./abstract')
   buildConfig: ->
     sassConfig = @getConfig().cssSass
 
+    changed = false
+
+    @_.each @g.file.expand("#{@getAppConfig().css.basePath}/**/*.{sass,scss}"), (file) =>
+      return if changed == true
+      return if @fileCacheHasChanged(file) == false
+      changed = true
+
+    return {} unless changed == true
+
     cfg                         = {}
     cfg.options                 = {}
     cfg.options.trace           = sassConfig.trace
@@ -35,14 +44,11 @@ module.exports = class TaskHelper extends require('./abstract')
       src:    @getAppConfig().css.files.sassFiles || []
       cwd:    "#{@getAppConfig().css.basePath}"
       dest:   "#{@getConfig().tmp.css}/#{@getAppConfig().css.destFile}"
-      filter: (path) =>
-        changed = @fileCacheHasChanged(path)
-
-        @fileCacheUpdate(path) if changed == true
-
-        changed
     }]
 
     cfg.options.loadPath.push @getAppConfig().css.basePath
+
+    @_.each @g.file.expand("#{@getAppConfig().css.basePath}/**/*.{sass,scss}"), (file) =>
+      @fileCacheUpdate(file)
 
     cfg
