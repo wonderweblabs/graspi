@@ -72,3 +72,4 @@ spec/dummy/config/application.yml
 spec/dummy/config/database.yml
 spec/dummy/config/secrets.yml
 spec/dummy/config/mongoid.yml
+spec/dummy/config/mongoid.yml
