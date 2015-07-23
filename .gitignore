@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Environment normalisation:
 /.bundle/
 /vendor/bundle
@@ -6,6 +5,9 @@
 
 # gem files
 *.gem
+
+# graspi files
+graspi.yml
 
 # Ignore the default SQLite database.
 db/*.sqlite3
@@ -16,9 +18,7 @@ db/*.sqlite3-journal
 /log/*
 /tmp/
 /node_modules/
-*.gem
-*.rbc
-/.config
+/bower_components/
 /coverage/
 /InstalledFiles
 /pkg/
@@ -67,23 +67,9 @@ spec/dummy/tmp/
 spec/dummy/files/
 spec/dummy/public/system
 spec/dummy/public/medien
+spec/dummy/public/assets
 spec/dummy/config/application.yml
 spec/dummy/config/database.yml
 spec/dummy/config/secrets.yml
 spec/dummy/config/mongoid.yml
-test/dummy/db/*.sqlite3
-test/dummy/db/*.sqlite3-journal
-test/dummy/log/*.log
-test/dummy/.rvmrc
-test/dummy/.ruby-gemset
-test/dummy/.powrc
-test/dummy/.sass-cache/
-test/dummy/.tm_properties
-test/dummy/.idea/
-test/dummy/.sass-cache
-test/dummy/tmp/
-test/dummy/public/system
-test/dummy/public/medien
-test/dummy/config/application.yml
-test/dummy/config/database.yml
-test/dummy/config/secrets.yml
+spec/dummy/config/mongoid.yml
