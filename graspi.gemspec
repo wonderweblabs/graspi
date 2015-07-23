@@ -7,9 +7,9 @@ require "graspi/version"
 Gem::Specification.new do |s|
   s.name        = "graspi"
   s.version     = Graspi::VERSION
-  s.authors     = ["Sascha Hillig"]
-  s.email       = ["sascha@wonderweblabs.com"]
-  s.homepage    = "https://www.wonderweblabs.com"
+  s.authors     = ["Sascha Hillig", "Alexander Schrot", "wonderweblabs"]
+  s.email       = ["email@wonderweblabs.com"]
+  s.homepage    = "https://github.com/wonderweblabs/graspi"
   s.summary     = "Grunt asset pipeline with additional helpers for rails and middleman"
   s.description = <<-EOS
     Grunt asset pipeline for css, js, images, html templates and web components.
@@ -17,7 +17,14 @@ Gem::Specification.new do |s|
   EOS
   s.license     = "MIT"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
+
+  s.files = Dir[
+    "{app,config,db,lib}/**/*",
+    ".gitignore",
+    "LICENSE",
+    "Rakefile",
+    "README.md"
+  ]
   s.test_files = Dir["spec/**/*"]
 
 end
