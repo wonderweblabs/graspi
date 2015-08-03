@@ -1,42 +1,31 @@
+_ = require 'lodash'
+
 module.exports = class TaskHelper extends require('./abstract')
 
-  getGruntTask: ->
-    'uglify'
+  gruntTask: 'uglify'
 
-  getGruntTaskTarget: ->
-    "graspi-js-uglify-#{super()}"
+  gruntTaskTargetAppendix: 'graspi-js-uglify'
 
-  getCacheKey: ->
-    "js-uglify-#{@eac.env_name}-#{@eac.app_name}"
+  cacheKeyAppendix: 'js-uglify'
 
-  isEnabled: ->
-    return false unless super() == true
-    return false unless @getConfig().jsUglify.enabled == true
+  cached: -> @getConfig().js.uglify.cached == true
 
-    @fileCacheHasChanged(@getDestFilePath())
+  isCacheValid: ->
+    !@fileCacheHasChanged(@getDestFilePath())
+
+  # ------------------------------------------------------------
 
   buildConfig: ->
-    jsUglifyConfig = @getConfig().jsUglify.options
+    config = _.inject @getConfig().js.uglify.options, {}, (memo, value, key) =>
+      return memo if value == 'undefined' || value == undefined
+      return memo if value == 'null' || value == null
 
-    cfg                               = {}
-    cfg.options                       = {}
-    cfg.options.report                = @getConfig().jsUglify.report
-    cfg.options.sourceMap             = @getConfig().jsUglify.sourceMap
-    cfg.options.mangle                = jsUglifyConfig.mangle
-    cfg.options.beautify              = jsUglifyConfig.beautify
-    cfg.options.maxLineLen            = jsUglifyConfig.maxLineLen
-    cfg.options.ASCIIOnly             = jsUglifyConfig.ASCIIOnly
-    cfg.options.exportAll             = jsUglifyConfig.exportAll
-    cfg.options.preserveComments      = jsUglifyConfig.preserveComments
-    cfg.options.banner                = jsUglifyConfig.banner
-    cfg.options.footer                = jsUglifyConfig.footer
-    cfg.options.screwIE8              = jsUglifyConfig.screwIE8
-    cfg.options.mangleProperties      = jsUglifyConfig.mangleProperties
-    cfg.options.reserveDOMProperties  = jsUglifyConfig.reserveDOMProperties
-    cfg.options.nameCache             = jsUglifyConfig.nameCache
-    cfg.options.quoteStyle            = jsUglifyConfig.quoteStyle
+      memo[key] = value
+      memo
 
-    cfg.files = {}
+    cfg         = {}
+    cfg.options = config
+    cfg.files   = {}
     cfg.files[@getDestFilePath()] = [@getDestFilePath()]
 
     @fileCacheUpdate(@getDestFilePath())

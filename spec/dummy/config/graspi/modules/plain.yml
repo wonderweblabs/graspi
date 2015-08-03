@@ -1,0 +1,27 @@
+dependencies:
+  - jquery-2.1.4
+
+options:
+  destPath: 'spec/dummy/public/assets/g-development/plain'
+  css:
+    basePath: 'spec/dummy/app/assets/stylesheets/plain'
+    destFile: 'application.css'
+    files:
+      - '{,*/}*.css'
+  js:
+    basePath: 'spec/dummy/app/assets/javascripts/plain'
+    destFile: 'application.js'
+    files:
+      - '{,*/}*.js'
+  images:
+    basePath: 'spec/dummy/app/assets/images/plain'
+    files:
+      - '{,*/}*'
+
+environments:
+  staging:
+    options:
+      destPath: 'spec/dummy/public/assets/g-staging/plain'
+  production:
+    options:
+      destPath: 'spec/dummy/public/assets/g/plain'

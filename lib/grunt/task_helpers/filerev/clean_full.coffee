@@ -1,14 +1,14 @@
+_     = require 'lodash'
+
 module.exports = class TaskHelper extends require('./abstract')
 
-  getGruntTask: ->
-    'clean'
+  gruntTask: 'clean'
 
-  getGruntTaskTarget: ->
-    "graspi-filerev-clean-#{super()}"
+  gruntTaskTargetAppendix: 'graspi-filerev-clean'
+
+  cached: false
+
+  # ------------------------------------------------------------
 
   buildConfig: ->
-    cfg     = {}
-
-    cfg.src = [@getMappingFilePath()]
-
-    cfg
+    { src: [@getMappingFile()] }

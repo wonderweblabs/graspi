@@ -1,13 +1,16 @@
+_     = require 'lodash'
+File  = require 'path'
+
 module.exports = class AbstractTaskHelper extends require('../abstract')
 
-  getCacheKey: ->
-    "css-#{@eac.env_name}-#{@eac.app_name}"
+  cacheKeyAppendix: 'css'
 
-  isEnabled: ->
-    return false unless super() == true
-    return false unless @_.isObject(@getAppConfig().css)
+  enabled: -> _.isObject(@getAppConfig().css)
 
-    true
+  # ------------------------------------------------------------
+
+  getBasePath: ->
+    @getAppConfig().css.basePath || super() || []
 
   getDestFilePath: ->
-    "#{@getAppConfig().css.destPath}/#{@getAppConfig().css.destFile}"
+    File.join(@getDestPath(), @getAppConfig().css.destFile)

@@ -1,15 +1,15 @@
+_     = require 'lodash'
+File  = require 'path'
+
 module.exports = class TaskHelper extends require('./abstract')
 
-  getGruntTask: ->
-    'clean'
+  gruntTask: 'clean'
 
-  getGruntTaskTarget: ->
-    "graspi-manifest-clean-#{super()}"
+  gruntTaskTargetAppendix: 'graspi-manifest-clean'
+
+  cached: false
+
+  # ------------------------------------------------------------
 
   buildConfig: ->
-    {}
-    # cfg     = {}
-
-    # cfg.src = []
-
-    # cfg
+    { src: [@getManifestFile()] }

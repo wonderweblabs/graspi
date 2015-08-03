@@ -1,28 +1,28 @@
-module.exports = (grunt, configPath) ->
+module.exports = (grunt, config, options) ->
 
-  taskRunner  = require('../util/task_runner')(grunt, configPath)
+  taskRunner  = require('../util/task_runner')(grunt, config, options)
 
-  grunt.registerTask 'graspi_js', (t1, t2) ->
-    taskRunner.runGruntTask 'graspi_js_copy', t1, t2
-    taskRunner.runGruntTask 'graspi_js_coffee_compile', t1, t2
-    taskRunner.runGruntTask 'graspi_js_concat', t1, t2
-    taskRunner.runGruntTask 'graspi_js_uglify', t1, t2
+  grunt.registerTask 'graspi_js', (env_name, mod_name) ->
+    taskRunner.runGraspiTask env_name, mod_name, 'graspi_js_copy'
+    taskRunner.runGraspiTask env_name, mod_name, 'graspi_js_coffee_compile'
+    taskRunner.runGraspiTask env_name, mod_name, 'graspi_js_concat'
+    taskRunner.runGraspiTask env_name, mod_name, 'graspi_js_uglify'
 
-  grunt.registerTask 'graspi_js_copy', (t1, t2) ->
-    taskRunner.runGraspiTask t1, t2, 'task_helpers/js/copy'
+  grunt.registerTask 'graspi_js_copy', (env_name, mod_name) ->
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'js/copy'
 
-  grunt.registerTask 'graspi_js_coffee_compile', (t1, t2) ->
-    taskRunner.runGraspiTask t1, t2, 'task_helpers/js/coffee_compile'
+  grunt.registerTask 'graspi_js_coffee_compile', (env_name, mod_name) ->
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'js/coffee_compile'
 
-  grunt.registerTask 'graspi_js_concat', (t1, t2) ->
-    taskRunner.runGraspiTask t1, t2, 'task_helpers/js/concat'
+  grunt.registerTask 'graspi_js_concat', (env_name, mod_name) ->
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'js/concat'
 
-  grunt.registerTask 'graspi_js_uglify', (t1, t2) ->
-    taskRunner.runGraspiTask t1, t2, 'task_helpers/js/uglify'
+  grunt.registerTask 'graspi_js_uglify', (env_name, mod_name) ->
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'js/uglify'
 
-  grunt.registerTask 'graspi_js_clean', (t1, t2) ->
-    taskRunner.runGraspiTask t1, t2, 'task_helpers/js/clean'
+  grunt.registerTask 'graspi_js_clean', (env_name, mod_name) ->
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'js/clean'
 
-  grunt.registerTask 'graspi_js_clean_full', (t1, t2) ->
-    taskRunner.runGruntTask 'graspi_js_clean', t1, t2
-    taskRunner.runGraspiTask t1, t2, 'task_helpers/js/clean_full'
+  grunt.registerTask 'graspi_js_clean_full', (env_name, mod_name) ->
+    taskRunner.runGraspiTask env_name, mod_name, 'graspi_js_clean'
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'js/clean_full'

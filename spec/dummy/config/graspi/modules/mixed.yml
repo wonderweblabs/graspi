@@ -1,0 +1,32 @@
+dependencies:
+  - jquery-2.1.4
+  - backbone.babysitter-0.1.8
+  - backbone.wreqr-1.3.3
+  - cached:backbone-1.2.1
+
+options:
+  destPath: 'spec/dummy/public/assets/g-development/mixed'
+  css:
+    basePath: 'spec/dummy/app/assets/stylesheets/mixed'
+    destFile: 'application.css'
+    files:
+      - 'application.sass'
+      - '{,*/}*.css'
+  js:
+    basePath: 'spec/dummy/app/assets/javascripts/mixed'
+    destFile: 'application.js'
+    files:
+      - '{,*/}*.coffee'
+      - '{,*/}*.js'
+  images:
+    basePath: 'spec/dummy/app/assets/images/mixed'
+    files:
+      - '{,*/}*'
+
+environments:
+  staging:
+    options:
+      destPath: 'spec/dummy/public/assets/g-staging/mixed'
+  production:
+    options:
+      destPath: 'spec/dummy/public/assets/g/mixed'

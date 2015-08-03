@@ -1,17 +1,19 @@
-Crypto              = require('crypto')
-Fs                  = require('fs')
-File                = require('path')
-Convert             = require('convert-source-map')
+_       = require 'lodash'
+Crypto  = require('crypto')
+Fs      = require('fs')
+File    = require('path')
+Convert = require('convert-source-map')
 
 module.exports = class TaskHelper extends require('./abstract')
 
-  isEnabled: ->
-    return false unless super() == true
+  cached: -> @getConfig().postpipeline.filerevision.cached == true
 
-    @getConfig().filerevision.enabled == true
+  withDigest: -> @getConfig().postpipeline.filerevision.digest == true
+
+  # ------------------------------------------------------------
 
   run: ->
-    @mappingUpdatable = false
+    return if @isEnabled() == false
 
     @_readMappingFile()
 
@@ -38,61 +40,30 @@ module.exports = class TaskHelper extends require('./abstract')
     @_mapping or= @_readMappingFile()
 
   getMappingFilePrettyPrint: ->
-    @getConfig().filerevision.manifest.prettyPrint
-
-  getCssBasePaths: ->
-    return [] unless @_.isObject(@getAppConfig().css)
-
-    p = "#{@getAppConfig().css.destPath}/#{@getAppConfig().css.destFile}"
-    if @g.file.exists(p) then [File.dirname(p)] else []
-
-  getJsBasePaths: ->
-    return [] unless @_.isObject(@getAppConfig().js)
-
-    p = "#{@getAppConfig().js.destPath}/#{@getAppConfig().js.destFile}"
-    if @g.file.exists(p) then [File.dirname(p)] else []
-
-  getImagesBasePaths: ->
-    return [] unless @_.isObject(@getAppConfig().images)
-
-    [File.join(@getAppConfig().images.destPath, @getAppConfig().images.destFolder)]
-
-  getBasePaths: ->
-    return @_basePaths unless @_.isEmpty(@_basePaths)
-
-    @_basePaths = [
-      @getCssBasePaths(),
-      @getCssBasePaths(),
-      @getImagesBasePaths()
-    ]
-
-    @_basePaths = @_.uniq(@_.flatten(@_basePaths))
-    @_basePaths
+    @getConfig().postpipeline.filerevision.options.mappingPrettyPrint
 
   # -----
 
   collectFilesInBasePaths: ->
-    @_.inject @getBasePaths(), [], (memo, path) =>
-      memo = memo.concat(@g.file.expand(File.join(path, '{,*/}*')))
-      memo
+    @g.file.expand(File.join(@getAppConfig().destPath, '**/*'))
 
   filterRevisionedFiles: (files) ->
-    @_.filter files, (path) =>
+    _.filter files, (path) =>
       @getRevisionedFileRegex().test(path) == false
 
   filterChangedFiles: (files) ->
-    @_.filter files, (path) => @fileCacheHasChanged(path)
+    _.filter files, (path) => @fileCacheHasChanged(path)
 
   dropOldRevisionFiles: (files) ->
-    return unless @isEnabled() == true
+    return unless @withDigest() == true
 
-    @_.each files, (path) =>
+    _.each files, (path) =>
       f = @getMapping()[path]
       @g.file.delete(f) if f && f != path && @g.file.exists(f)
 
   createRevisionFiles: (files) ->
-    @_.each files, (path) =>
-      if @isEnabled() == true
+    _.each files, (path) =>
+      if @withDigest() == true
         newPath = @_digestPath(path)
         @g.file.copy(path, newPath)
       else
@@ -101,7 +72,7 @@ module.exports = class TaskHelper extends require('./abstract')
       @getMapping()[path] = newPath
 
   updateSourceMapLink: (files) ->
-    @_.each files, (path) =>
+    _.each files, (path) =>
       sourceMapPath   = "#{path}.map"
       resultFilePath  = @getMapping()[path]
 
@@ -120,7 +91,7 @@ module.exports = class TaskHelper extends require('./abstract')
 
 
   updateFileChangeTimestamps: (files) ->
-    @_.each files, (path) => @fileCacheUpdate(path)
+    _.each files, (path) => @fileCacheUpdate(path)
 
 
   # ----------------------------------------------------------
@@ -128,10 +99,10 @@ module.exports = class TaskHelper extends require('./abstract')
 
   # @nodoc
   _readMappingFile: ->
-    return {} unless @g.file.exists(@getMappingFilePath())
+    return {} unless @g.file.exists(@getMappingFile())
 
     try
-      @_mapping = @g.file.readJSON(@getMappingFilePath())
+      @_mapping = @g.file.readJSON(@getMappingFile())
     catch e
       @_mapping = {}
 
@@ -143,7 +114,7 @@ module.exports = class TaskHelper extends require('./abstract')
     spaces = if @getMappingFilePrettyPrint() == true then 4 else 0
     mapping = JSON.stringify(@_mapping, null, spaces)
 
-    @g.file.write @getMappingFilePath(), mapping, { encoding: 'utf-8' }
+    @g.file.write @getMappingFile(), mapping, { encoding: 'utf-8' }
 
   # @nodoc
   _digestPath: (path) ->

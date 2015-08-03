@@ -1,24 +1,24 @@
-Crypto              = require('crypto')
-Fs                  = require('fs')
-File                = require('path')
-Convert             = require('convert-source-map')
+_         = require 'lodash'
+File      = require 'path'
+JsonFile  = require '../../util/json_file'
 
 module.exports = class TaskHelper extends require('./abstract')
 
-  isEnabled: ->
-    return false unless super() == true
+  cached: -> @getConfig().postpipeline.manifest.cached == true
 
-    @getConfig().manifest.enabled == true
+  isCacheValid: ->
+    @g.file.exists(@getManifestFile()) &&
+    !@fileCacheHasChanged(@getMappingFile())
+
+  # ------------------------------------------------------------
 
   run: ->
-    return unless @isEnabled() == true
-    return unless !@g.file.exists(@getManifestFilePath()) || @fileCacheHasChanged(@getMappingFilePath())
-
-    @mappingUpdatable  = false
+    return if @isEnabled() == false
+    return if @isCached() && @isCacheValid()
 
     @_readManifestFile()
 
-    mapping = @_.merge {}, @getMapping()
+    mapping = _.merge {}, @getMapping()
     mapping = @parseMapping(mapping)
     mapping = @parseMappingWithPattern(mapping)
 
@@ -29,14 +29,17 @@ module.exports = class TaskHelper extends require('./abstract')
 
   # -----
 
+  getJsonFile: ->
+    @_jsonFile or= JsonFile(@g)
+
   getManifest: ->
     @_manifest or= @_readManifestFile()
 
   getManifestFilePrettyPrint: ->
-    @getConfig().manifest.prettyPrint
+    @getConfig().postpipeline.manifest.options.mappingPrettyPrint
 
   getManifestReplacePattern: ->
-    @getConfig().manifest.pathReplacePattern
+    @getConfig().postpipeline.manifest.replacePattern
 
   getMapping: ->
     @_mapping or= @_readMappingFile()
@@ -44,21 +47,11 @@ module.exports = class TaskHelper extends require('./abstract')
   # -----
 
   parseMapping: (mapping) ->
-    destPaths = []
+    _.inject mapping, {}, (memo, resultPath, path) =>
+      pathNew = path.replace(@getAppConfig().destPath, '')
+      pathNew = File.join(@getModName(), pathNew)
 
-    destPaths.push @getAppConfig().css.destPath if @_.isObject(@getAppConfig().css)
-    destPaths.push @getAppConfig().js.destPath if @_.isObject(@getAppConfig().js)
-    destPaths.push @getAppConfig().images.destPath if @_.isObject(@getAppConfig().images)
-
-    destPaths = @_.uniq(destPaths)
-
-    @_.inject mapping, {}, (memo, resultPath, path) =>
-      pathNew = null
-
-      @_.each destPaths, (destPath) =>
-        pathNew = path.replace(destPath, '')
-
-      return memo if @_.isEmpty(pathNew)
+      return memo if _.isEmpty(pathNew)
 
       pathNew = pathNew.replace(/^(\/)?/, '')
 
@@ -66,22 +59,21 @@ module.exports = class TaskHelper extends require('./abstract')
       memo
 
   parseMappingWithPattern: (mapping) ->
-    return mapping unless @_.isObject(@getManifestReplacePattern())
-
-    return mapping if @_.isEmpty(@getManifestReplacePattern().pattern)
+    return mapping unless _.isObject(@getManifestReplacePattern())
+    return mapping if _.isEmpty(@getManifestReplacePattern().pattern)
 
     pattern = new RegExp(@getManifestReplacePattern().pattern, 'g')
     replace = @getManifestReplacePattern().replace || ''
 
-    @_.inject mapping, {}, (memo, resultPath, path) =>
+    _.inject mapping, {}, (memo, resultPath, path) =>
       memo[path] = resultPath.replace(pattern, replace)
       memo
 
   updateManifest: (mapping) ->
-    @_.each mapping, (resultPath, path) =>
+    _.each mapping, (resultPath, path) =>
       @getManifest()[path] = resultPath
 
-    @fileCacheUpdate(@getMappingFilePath())
+    @fileCacheUpdate(@getMappingFile())
 
 
   # ----------------------------------------------------------
@@ -89,37 +81,24 @@ module.exports = class TaskHelper extends require('./abstract')
 
   # @nodoc
   _readManifestFile: ->
-    return {} unless @g.file.exists(@getManifestFilePath())
+    @_originalManifest = @getJsonFile().read(@getManifestFile())
 
-    try
-      @_originalManifest = @g.file.readJSON(@getManifestFilePath())
-    @_originalManifest or= {}
-
-    @_manifest = @_originalManifest[@eac.env_name]
+    @_manifest = @_originalManifest[@getEnvName()]
     @_manifest or= {}
 
     @_manifest
 
   # @nodoc
   _readMappingFile: ->
-    return {} unless @g.file.exists(@getMappingFilePath())
-
-    try
-      @_mapping = @g.file.readJSON(@getMappingFilePath())
-    @_mapping or= {}
-
-    @_mapping
+    @_mapping = @getJsonFile().read(@getMappingFile())
 
   # @nodoc
   _writeManifestFile: ->
     @_originalManifest or= {}
-    @_originalManifest[@eac.env_name] or= {}
-    @_originalManifest[@eac.env_name] = @_.merge {}, @_originalManifest[@eac.env_name], @_manifest
+    @_originalManifest[@getEnvName()] or= {}
+    @_originalManifest[@getEnvName()] = _.merge {}, @_originalManifest[@getEnvName()], @_manifest
 
-    spaces = if @getManifestFilePrettyPrint() == true then 4 else 0
-    mapping = JSON.stringify(@_originalManifest, null, spaces)
-
-    @g.file.write @getManifestFilePath(), mapping, { encoding: 'utf-8' }
+    @getJsonFile().write(@getManifestFile(), @_originalManifest)
 
 
 

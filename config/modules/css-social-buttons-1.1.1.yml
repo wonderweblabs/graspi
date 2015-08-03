@@ -1,0 +1,21 @@
+dependencies: []
+
+tasks:
+  graspi_build:
+    - graspi_fonts_copy
+    - graspi_css_copy
+    - graspi_css_concat
+
+options:
+  basePath: 'bower_components/css-social-buttons/css'
+  destPath: 'tmp/graspi/build/css-social-buttons'
+  css:
+    destFile: 'zocial.css'
+    files:
+      - 'zocial.css'
+  fonts:
+    files:
+      - 'zocial.eot'
+      - 'zocial.svg'
+      - 'zocial.ttf'
+      - 'zocial.woff'

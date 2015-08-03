@@ -1,0 +1,15 @@
+tmpPath: 'spec/dummy/tmp/graspi'
+cacheFile: 'spec/dummy/tmp/graspi/files_cache_register.json'
+modulesBuiltTrackFile: 'spec/dummy/tmp/graspi/modules_built_track_register.json'
+
+css:
+  sass:
+    options:
+      loadPath:
+        - bower_components/bourbon/app/assets/stylesheets
+        - bower_components/neat/app/assets/stylesheets
+
+js:
+  uglify:
+    options:
+      nameCache: 'spec/dummy/tmp/grunt/uglify_mangle_cache.json'

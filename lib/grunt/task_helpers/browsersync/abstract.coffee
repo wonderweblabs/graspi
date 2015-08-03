@@ -1,10 +1,9 @@
+_ = require 'lodash'
+
 module.exports = class AbstractTaskHelper extends require('../abstract')
 
-  getCacheKey: ->
-    "browsersync-#{@eac.env_name}-#{@eac.app_name}"
+  cacheKeyAppendix: 'browsersync'
 
-  isEnabled: ->
-    return false unless super() == true
-    return false unless @_.isObject(@getConfig().browserSync)
+  enabled: -> _.isObject(@getConfig().live.browserSync)
 
-    @getConfig().browserSync.enabled == true
+  # ------------------------------------------------------------

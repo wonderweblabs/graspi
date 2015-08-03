@@ -4,10 +4,14 @@ module.exports = (grunt) ->
   require('time-grunt')(grunt)
 
   # graspi configuration
-  File    = require('path')
-  dir     = File.resolve()
-  config  = File.join(dir, 'graspi.yml')
-  cfg = require('./lib/grunt/graspi')(grunt, config)
+  File   = require('path')
+  dir    = File.resolve()
+  graspi = require('./lib/grunt/graspi')(grunt,
+    gruntRoot:            dir
+    configTmpFile:        File.join(dir, 'spec/dummy/tmp/graspi/config.yml')
+    projectConfigFolder:  File.join(dir, 'spec/dummy/config/graspi')
+    tasksLoadPaths:       []
+  )
 
   # Automatically load required grunt tasks
   require('jit-grunt')(grunt)

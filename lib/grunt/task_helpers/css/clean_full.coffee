@@ -1,22 +1,29 @@
+_     = require 'lodash'
+File  = require 'path'
+
 module.exports = class TaskHelper extends require('./abstract')
 
-  getGruntTask: ->
-    'clean'
+  gruntTask: 'clean'
 
-  getGruntTaskTarget: ->
-    "graspi-css-clean-#{super()}"
+  gruntTaskTargetAppendix: 'graspi-css-clean'
 
-  getTmpFilesUrl: ->
-    "#{@getConfig().tmp.css}/#{@getAppConfig().css.destFile}/{,*/}*.css"
+  cached: false
 
-  buildConfig: ->
-    cfg     = {}
+  # ------------------------------------------------------------
 
-    cfg.src = [
-      @getTmpFilesUrl(),
-      "#{@getTmpFilesUrl()}.map",
-      @getDestFilePath(),
-      "#{@getDestFilePath()}.map"
+  getFiles: ->
+    [
+      File.join(@getAppConfig().destPath, '**/*.css'),
+      File.join(@getAppConfig().destPath, '**/*.css.map'),
+      File.join(@getTmpPath(), '**/*.sass'),
+      File.join(@getTmpPath(), '**/*.sass.map'),
+      File.join(@getTmpPath(), '**/*.scss'),
+      File.join(@getTmpPath(), '**/*.scss.map'),
+      File.join(@getTmpPath(), '**/*.less'),
+      File.join(@getTmpPath(), '**/*.less.map'),
+      File.join(@getTmpPath(), '**/*.css'),
+      File.join(@getTmpPath(), '**/*.css.map')
     ]
 
-    cfg
+  buildConfig: ->
+    { src: @getFiles() }

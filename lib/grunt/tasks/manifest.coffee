@@ -1,13 +1,13 @@
-module.exports = (grunt, configPath) ->
+module.exports = (grunt, config, options) ->
 
-  taskRunner  = require('../util/task_runner')(grunt, configPath)
+  taskRunner  = require('../util/task_runner')(grunt, config, options)
 
-  grunt.registerTask 'graspi_manifest', (t1, t2) ->
-    taskRunner.runGraspiTask t1, t2, 'task_helpers/manifest/manifest'
+  grunt.registerTask 'graspi_manifest', (env_name, mod_name) ->
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'manifest/manifest'
 
-  grunt.registerTask 'graspi_manifest_clean', (t1, t2) ->
-    taskRunner.runGraspiTask t1, t2, 'task_helpers/manifest/clean'
+  grunt.registerTask 'graspi_manifest_clean', (env_name, mod_name) ->
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'manifest/clean'
 
-  grunt.registerTask 'graspi_manifest_clean_full', (t1, t2) ->
-    taskRunner.runGruntTask 'graspi_manifest_clean', t1, t2
-    taskRunner.runGraspiTask t1, t2, 'task_helpers/manifest/clean_full'
+  grunt.registerTask 'graspi_manifest_clean_full', (env_name, mod_name) ->
+    taskRunner.runGraspiTask env_name, mod_name, 'graspi_manifest_clean'
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'manifest/clean_full'

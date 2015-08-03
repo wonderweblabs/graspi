@@ -1,37 +1,32 @@
+_ = require 'lodash'
+
 module.exports = class TaskHelper extends require('./abstract')
 
-  getGruntTask: ->
-    'cssmin'
+  gruntTask: 'cssmin'
 
-  getGruntTaskTarget: ->
-    "graspi-css-minify-#{super()}"
+  gruntTaskTargetAppendix: 'graspi-css-minify'
 
-  getCacheKey: ->
-    "css-minify-#{@eac.env_name}-#{@eac.app_name}"
+  cacheKeyAppendix: 'css-minify'
 
-  isEnabled: ->
-    return false unless super() == true
-    return false unless @getConfig().cssMinify.enabled == true
+  cached: -> @getConfig().css.minify.cached == true
 
-    @fileCacheHasChanged(@getDestFilePath())
+  isCacheValid: ->
+    !@fileCacheHasChanged(@getDestFilePath())
+
+  # ------------------------------------------------------------
 
   buildConfig: ->
-    cfg                                 = {}
-    cfg.options                         = {}
-    cfg.options.report                  = @getConfig().cssMinify.report
-    cfg.options.sourceMap               = @getConfig().cssMinify.sourceMap
-    cfg.options.advanced                = @getConfig().cssMinify.cleanCss.advanced
-    cfg.options.aggressiveMerging       = @getConfig().cssMinify.cleanCss.aggressiveMerging
-    cfg.options.compatibility           = @getConfig().cssMinify.cleanCss.compatibility
-    cfg.options.keepBreaks              = @getConfig().cssMinify.cleanCss.keepBreaks
-    cfg.options.keepSpecialComments     = @getConfig().cssMinify.cleanCss.keepSpecialComments
-    cfg.options.mediaMerging            = @getConfig().cssMinify.cleanCss.mediaMerging
-    cfg.options.rebase                  = @getConfig().cssMinify.cleanCss.rebase
-    cfg.options.restructuring           = @getConfig().cssMinify.cleanCss.restructuring
-    cfg.options.roundingPrecision       = @getConfig().cssMinify.cleanCss.roundingPrecision
-    cfg.options.semanticMerging         = @getConfig().cssMinify.cleanCss.semanticMerging
-    cfg.options.shorthandCompacting     = @getConfig().cssMinify.cleanCss.shorthandCompacting
-    cfg.options.sourceMapInlineSources  = @getConfig().cssMinify.cleanCss.sourceMapInlineSources
+    config = _.inject @getConfig().css.minify.options, {}, (memo, value, key) =>
+      return memo if value == 'undefined' || value == undefined
+      return memo if value == 'null' || value == null
+
+      memo[key] = value
+      memo
+
+    cfg                       = {}
+    cfg.options               = config
+    cfg.options.report                  = @getConfig().css.minify.report
+    cfg.options.sourceMap               = @getConfig().css.minify.sourceMap
 
     cfg.files = {}
     cfg.files[@getDestFilePath()] = [@getDestFilePath()]

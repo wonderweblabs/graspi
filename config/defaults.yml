@@ -1,0 +1,389 @@
+# tmp folder for modules
+tmpPath: 'tmp/graspi'
+
+# graspi tasks cache file
+cacheFile: 'tmp/graspi/files_cache_register.json'
+
+# graspi tasks built track file
+modulesBuiltTrackFile: 'tmp/graspi/modules_built_track_register.json'
+
+
+# ------------------------------------------------------
+# css
+# ------------------------------------------------------
+css:
+  # grunt-concat-sourcemap
+  concat:
+    cached:             true
+    includeDependencies: false
+  # grunt-contrib-copy
+  copy:
+    cached:             true
+  # grunt-contrib-sass
+  sass:
+    cached:             true
+    options:
+      sourcemap:          'auto'
+      trace:              false
+      unixNewlines:       true
+      check:              false
+      style:              'nested'
+      precision:          10
+      quiet:              false
+      compass:            false
+      debugInfo:          false
+      lineNumbers:        false
+      loadPath:           []
+      cacheLocation:      'tmp/grunt/sass_cache'
+      noCache:            false
+      bundleExec:         false
+      update:             true
+  # grunt-contrib-less
+  less:
+    cached:             true
+    options:
+      paths:              undefined
+      rootpath:           ''
+      compress:           false
+      plugins:            null
+      ieCompat:           true
+      optimization:       null
+      strictImports:      false
+      strictMath:         false
+      strictUnits:        false
+      syncImport:         false
+      dumpLineNumbers:    false
+      relativeUrls:       false
+      customFunctions:    undefined
+      sourceMap:          false
+      sourceMapFilename:  undefined
+      sourceMapURL:       undefined
+      sourceMapBasepath:  undefined
+      sourceMapRootpath:  undefined
+      sourceMapFileInline: false
+      outputSourceFiles:  false
+      modifyVars:         undefined
+      banner:             undefined
+  # grunt-contrib-cssmin and clean-css
+  minify:
+    cached:             false
+    report:             'min'
+    sourceMap:          true
+    # clean-css
+    options:
+      advanced:               false
+      aggressiveMerging:      false
+      compatibility:          '*'
+      keepBreaks:             false
+      keepSpecialComments:    0
+      mediaMerging:           true
+      rebase:                 false
+      restructuring:          true
+      roundingPrecision:      -1
+      semanticMerging:        false
+      shorthandCompacting:    false
+      sourceMapInlineSources: false
+
+# ------------------------------------------------------
+# js
+# ------------------------------------------------------
+js:
+  # grunt-concat-sourcemap
+  copy:
+    cached:             true
+  # grunt-concat-sourcemap
+  concat:
+    cached:             true
+    includeDependencies: false
+  # grunt-contrib-coffee
+  coffee:
+    cached:             true
+    options:
+      bare:               false
+      join:               true
+      sourceMap:          true
+      sourceMapDir:       undefined
+      joinExt:            '.src.coffee'
+  # grunt-contrib-uglify
+  uglify:
+    cached:             true
+    options:
+      mangle:             {}
+      compress:           {}
+      beautify:           false
+      expression:         false
+      report:             'min'
+      sourceMap:          true
+      sourceMapName:      undefined
+      sourceMapIn:        undefined
+      sourceMapIncludeSources: false
+      sourceMapRoot:      undefined
+      enclose:            undefined
+      wrap:               undefined
+      maxLineLen:         32000
+      ASCIIOnly:          false
+      exportAll:          false
+      preserveComments:   'all'
+      banner:             ''
+      footer:             ''
+      screwIE8:           false
+      mangleProperties:   false
+      reserveDOMProperties: false
+      nameCache:          'tmp/grunt/uglify_mangle_cache.json'
+      quoteStyle:         0
+
+# ------------------------------------------------------
+# images
+# ------------------------------------------------------
+images:
+  # grunt-contrib-copy
+  copy:
+    cached:             true
+    includeDependencies: false
+    formats:
+      - jpeg
+      - jpg
+      - gif
+      - png
+      - svg
+  # grunt-contrib-imagemin
+  imagemin:
+    cached:             true
+    formats:
+      images:
+        - jpeg
+        - jpg
+        - gif
+        - png
+      svg:
+        - svg
+    options:
+      gifInterlaced:          false
+      jpegProgressive:        false
+      pngOptimizationLevel:   0
+    usePlugins:
+      - jpegRecompressPlugin
+    plugins:
+      # imagemin-jpeg-recompress
+      jpegRecompressPlugin:
+        loops:          6
+        accurate:       true
+        quality:        'veryhigh'
+        method:         'ssim'
+        target:         0.9999
+        min:            60
+        max:            99
+        defish:         0
+        progressive:    true
+        subsample:      'default'
+
+# ------------------------------------------------------
+# fonts
+# ------------------------------------------------------
+fonts:
+  # grunt-contrib-copy
+  copy:
+    cached:             true
+    includeDependencies: false
+    formats:
+      - eot
+      - woff
+      - woff2
+      - ttf
+      - svg
+
+# ------------------------------------------------------
+# templates
+# ------------------------------------------------------
+templates:
+  # grunt-contrib-copy
+  copy:
+    cached:             true
+  # grunt-haml
+  haml:
+    cached:             true
+    includeDependencies: false
+    options:
+      language: 'ruby'
+      target: 'html'
+      placement: 'global'
+      bare: true
+      precompile: false
+      includePath: false
+  # grunt-concat-sourcemap
+  concat:
+    cached:             true
+    includeDependencies: false
+
+# ------------------------------------------------------
+# postpipeline
+# ------------------------------------------------------
+postpipeline:
+  # custom implementation
+  filerevision:
+    digest:       false
+    cached:       true
+    options:
+      mappingPrettyPrint: true
+  # custom implementation
+  manifest:
+    cached:       true
+    options:
+      mappingPrettyPrint:   true
+      path:                 'public/assets/g-assets.json'
+    replacePattern:
+      pattern: '^(\/)?public\/'
+      replace: ''
+  # custom implementation
+  urlReplace:
+    cached:       true
+    options:
+      assetHost:    undefined
+      cssPatterns:
+        - pattern: 'image\-url\((?:QUOTES1|QUOTES2)(.*)(?:QUOTES1|QUOTES2)\)'
+          modifiers: 'g'
+          quotesPlaceholder: 'QUOTES1'
+          doubleQuotesPlaceholder: 'QUOTES2'
+
+# ------------------------------------------------------
+# live
+# ------------------------------------------------------
+live:
+  # grunt-contrib-watch
+  watch:
+    groups: []
+    options:
+      spawn:          false
+      # interrupt:      false
+      interrupt:      true
+      debounceDelay:  500
+      interval:       100
+      event:          'all'
+      reload:         false
+      # forever:        true
+      forever:        false
+      atBegin:        false
+      livereload:     35729
+      livereloadOnError: true
+  # grunt-browser-sync
+  browserSync:
+    bsFiles:      []
+    options:
+      watchTask:      true
+      server:         false
+      proxy:          false
+      port:           3002
+      https:          undefined
+      logLevel:       'info'
+      logPrefix:      'BS'
+      logConnections: false
+      logFileChanges: true
+      logSnippet:     true
+      rewriteRules:   false
+      tunnel:         null
+      online:         null
+      open:           false
+      browser:        'default'
+      xip:            false
+      reloadOnRestart: false
+      notify:         true
+      scrollProportionally: true
+      scrollThrottle: 0
+      scrollRestoreTechnique: 'window.name'
+      reloadDelay:    0
+      reloadDebounce: 0
+      plugins:        []
+      injectChanges:  true
+      startPath:      null
+      minify:         true
+      host:           null
+      codeSync:       true
+      timestamps:     true
+      scriptPath:     undefined
+
+# ------------------------------------------------------
+# tasks
+# ------------------------------------------------------
+tasks:
+  graspi_build: []
+  graspi_clean:
+    - graspi_images_clean
+    - graspi_fonts_clean
+    - graspi_templates_clean
+    - graspi_css_clean
+    - graspi_js_clean
+    - graspi_filerev_clean
+    - graspi_manifest_clean
+    - graspi_build_clean
+  graspi_clean_full:
+    - graspi_images_clean_full
+    - graspi_fonts_clean_full
+    - graspi_templates_clean_full
+    - graspi_css_clean_full
+    - graspi_js_clean_full
+    - graspi_filerev_clean_full
+    - graspi_manifest_clean_full
+    - graspi_build_clean_full
+  graspi_build_styles:
+    - 'graspi_css_copy'
+    - 'graspi_css_sass_compile'
+    - 'graspi_css_concat'
+    - 'graspi_css_minify'
+    - 'graspi_filerev'
+    - 'graspi_manifest'
+    - 'graspi_css_replace_urls'
+  graspi_build_css:
+    - 'graspi_css_copy'
+    - 'graspi_css_concat'
+    - 'graspi_css_minify'
+    - 'graspi_filerev'
+    - 'graspi_manifest'
+    - 'graspi_css_replace_urls'
+  graspi_build_sass:
+    - 'graspi_css_sass_compile'
+    - 'graspi_css_concat'
+    - 'graspi_css_minify'
+    - 'graspi_filerev'
+    - 'graspi_manifest'
+    - 'graspi_css_replace_urls'
+  graspi_build_scripts:
+    - 'graspi_js_copy'
+    - 'graspi_js_coffee_compile'
+    - 'graspi_js_concat'
+    - 'graspi_js_uglify'
+  graspi_build_js:
+    - 'graspi_js_copy'
+    - 'graspi_js_concat'
+    - 'graspi_js_uglify'
+  graspi_build_coffee:
+    - 'graspi_js_coffee_compile'
+    - 'graspi_js_concat'
+    - 'graspi_js_uglify'
+  graspi_build_images:
+    - 'graspi_images'
+    - 'graspi_filerev'
+    - 'graspi_manifest'
+    - 'graspi_css_concat'
+    - 'graspi_css_minify'
+    - 'graspi_filerev'
+    - 'graspi_manifest'
+    - 'graspi_css_replace_urls'
+  graspi_build_fonts:
+    - 'graspi_fonts'
+    - 'graspi_filerev'
+    - 'graspi_manifest'
+    - 'graspi_css_concat'
+    - 'graspi_css_minify'
+    - 'graspi_filerev'
+    - 'graspi_manifest'
+    - 'graspi_css_replace_urls'
+
+# ------------------------------------------------------
+# environments
+# ------------------------------------------------------
+defaultEnvironment: 'development'
+environments:
+  development: {}
+  staging: {}
+  production: {}
+

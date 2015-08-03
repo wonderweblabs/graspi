@@ -1,22 +1,25 @@
+_     = require 'lodash'
+File  = require 'path'
+
 module.exports = class TaskHelper extends require('./abstract')
 
-  getGruntTask: ->
-    'clean'
+  gruntTask: 'clean'
 
-  getGruntTaskTarget: ->
-    "graspi-js-clean-#{super()}"
+  gruntTaskTargetAppendix: 'graspi-js-clean'
 
-  getTmpFilesUrl: ->
-    "#{@getConfig().tmp.js}/#{@getAppConfig().js.destFile}/{,*/}*.js"
+  cached: false
 
-  buildConfig: ->
-    cfg     = {}
+  # ------------------------------------------------------------
 
-    cfg.src = [
-      @getTmpFilesUrl(),
-      "#{@getTmpFilesUrl()}.map",
-      @getDestFilePath(),
-      "#{@getDestFilePath()}.map"
+  getFiles: ->
+    [
+      File.join(@getAppConfig().destPath, '**/*.js'),
+      File.join(@getAppConfig().destPath, '**/*.js.map'),
+      File.join(@getTmpPath(), '**/*.coffee'),
+      File.join(@getTmpPath(), '**/*.coffee.map'),
+      File.join(@getTmpPath(), '**/*.js'),
+      File.join(@getTmpPath(), '**/*.js.map')
     ]
 
-    cfg
+  buildConfig: ->
+    { src: @getFiles() }

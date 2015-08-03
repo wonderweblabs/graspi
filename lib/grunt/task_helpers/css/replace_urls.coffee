@@ -1,53 +1,67 @@
+_         = require 'lodash'
+File      = require 'path'
+JsonFile  = require '../../util/json_file'
+
 module.exports = class TaskHelper extends require('./abstract')
 
-  getCacheKey: ->
-    "css-replace_urls-#{@eac.env_name}-#{@eac.app_name}"
+  gruntTask: 'replace'
 
-  getGruntTask: ->
-    'replace'
+  gruntTaskTargetAppendix: 'graspi-css-replace_urls'
 
-  getGruntTaskTarget: ->
-    "graspi-css-replace_urls-#{super()}"
+  cacheKeyAppendix: 'css-replace_urls'
 
-  isEnabled: ->
-    return false unless super() == true
-    return false unless @getConfig().manifest.enabled == true
-    return false unless @fileCacheHasChanged(@getDestFilePath())
+  cached: -> @getConfig().postpipeline.urlReplace.cached == true
 
-    true
+  isCacheValid: ->
+    !@fileCacheHasChanged(@getDestFilePath())
+
+  # ------------------------------------------------------------
+
+  getJsonFile: ->
+    @_jsonFile or= JsonFile(@g)
 
   getManifestMapping: ->
-    try
-      mapping = @g.file.readJSON(@getConfig().manifest.path)
-    mapping or= {}
+    mapping = @getJsonFile().read(@getConfig().postpipeline.manifest.options.path)
 
-    mapping[@eac.env_name] || {}
+    mapping[@getEnvName()] || {}
 
   getAssetHost: ->
-    @getConfig().assetHost
+    host = @getConfig().postpipeline.urlReplace.options.assetHost
+
+    return '' if host == 'undefined' || host == undefined
+    return '' if host == 'null' || host == null
+
+    host
+
+  getPatterns: ->
+    patterns = @getConfig().postpipeline.urlReplace.options.cssPatterns
+
+    @_normalizePatterns(patterns)
 
   buildConfig: ->
-    mapping = @getManifestMapping()
+    mapping   = @getManifestMapping()
+    patterns  = @getPatterns()
 
-    cfg                                 = {}
-    cfg.options                         = {}
-    cfg.options.patterns                = []
-    cfg.options.patterns.push {
-      match: /image\-url\((\'|\")(.*)(\'|\")\)/g
-      replacement: (match) =>
-        result = match.replace(/image\-url\((\'|\")/g, '')
-        result = result.replace(/(\'|\")\)/g, '')
+    cfg                   = {}
+    cfg.options           = {}
+    cfg.options.patterns  = []
 
-        return match if @_.isEmpty(mapping[result])
+    _.each patterns, (pattern) =>
+      p       = {}
+      p.match = new RegExp(pattern.pattern, pattern.pattern.modifiers)
+      p.replacement = (match) =>
+        match   = match[0] if _.isArray(match)
+        result  = match.match(/image\-url\((?:\"|\')(.*)(?:\"|\')\)/)
+        file    = result[1] if _.isArray(result) && _.isString(result[1])
 
-        result = mapping[result]
+        return match if _.isEmpty(mapping[file])
+        return "url('#{mapping[file]}')" if _.isEmpty(@getAssetHost())
 
-        unless @_.isEmpty(@getAssetHost())
-          host = @getAssetHost().replace(/\/$/, '')
-          result = "#{host}/#{result}"
+        host = @getAssetHost().replace(/\/$/, '')
 
-        "url('#{result}')"
-    }
+        "url('#{host}/#{mapping[file]}')"
+
+      cfg.options.patterns.push p
 
     cfg.files = []
     cfg.files.push {
@@ -56,3 +70,26 @@ module.exports = class TaskHelper extends require('./abstract')
     }
 
     cfg
+
+  # ----------------------------------------------------------
+  # private
+
+  # @nodoc
+  _normalizePatterns: (patterns) ->
+    _.map patterns, (pattern) => @_normalizePattern(pattern)
+
+  # @nodoc
+  _normalizePattern: (pattern) ->
+    if _.isString(pattern.quotesPlaceholder)
+      regex = new RegExp("(#{pattern.quotesPlaceholder})", 'g')
+      pattern.pattern = pattern.pattern.replace(regex, '\\\'')
+
+    if _.isString(pattern.doubleQuotesPlaceholder)
+      regex = new RegExp("(#{pattern.doubleQuotesPlaceholder})", 'g')
+      pattern.pattern = pattern.pattern.replace(regex, '\\\"')
+
+    pattern
+
+
+
+

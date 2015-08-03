@@ -1,13 +1,13 @@
 module.exports = class TaskHelper extends require('./abstract')
 
-  getCacheKey: ->
-    @_cacheKey
+  enabled: true
+
+  # ------------------------------------------------------------
 
   run: ->
-    @_cacheKey = "css-#{@eac.env_name}-#{@eac.app_name}"
-    @fileCacheClean()
-    @_cacheKey = "css-minify-#{@eac.env_name}-#{@eac.app_name}"
-    @fileCacheClean()
-
-  isEnabled: ->
-    true
+    @fileCacheClean(@getCacheKey('css'))
+    @fileCacheClean(@getCacheKey('css-copy'))
+    @fileCacheClean(@getCacheKey('css-sass'))
+    @fileCacheClean(@getCacheKey('css-concat'))
+    @fileCacheClean(@getCacheKey('css-minify'))
+    @fileCacheClean(@getCacheKey('css-replace_urls'))

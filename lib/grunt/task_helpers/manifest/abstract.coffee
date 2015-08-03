@@ -1,16 +1,16 @@
+_     = require 'lodash'
+File  = require 'path'
+
 module.exports = class AbstractTaskHelper extends require('../abstract')
 
-  getCacheKey: ->
-    "manifest-#{@eac.env_name}-#{@eac.app_name}"
+  cacheKeyAppendix: 'manifest'
 
-  isEnabled: ->
-    return false unless super() == true
-    return false unless @_.isObject(@getConfig().manifest)
+  enabled: -> _.isObject(@getConfig().postpipeline.manifest)
 
-    true
+  # ------------------------------------------------------------
 
-  getManifestFilePath: ->
-    @getConfig().manifest.path
+  getManifestFile: ->
+    @getConfig().postpipeline.manifest.options.path
 
-  getMappingFilePath: ->
-    "#{@getConfig().tmp.filerevision}/#{@eac.env_name}-#{@eac.app_name}.json"
+  getMappingFile: ->
+    File.join(@getTmpPath(), 'revision-mapping.json')

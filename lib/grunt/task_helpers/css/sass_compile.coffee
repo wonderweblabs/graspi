@@ -1,54 +1,59 @@
+_     = require 'lodash'
+File  = require 'path'
+
 module.exports = class TaskHelper extends require('./abstract')
 
-  getGruntTask: ->
-    'sass'
+  gruntTask: 'sass'
 
-  getGruntTaskTarget: ->
-    "graspi-css-sass_compile-#{super()}"
+  gruntTaskTargetAppendix: 'graspi-css-sass_compile'
 
-  isEnabled: ->
-    return false unless super() == true
-    return false unless @_.isObject(@getAppConfig().css.files)
-    return false unless @getConfig().cssSass.enabled == true
+  cacheKeyAppendix: 'css-sass'
 
-    @_.isObject(@getAppConfig().css.files.sassFiles)
+  cached: -> @getConfig().css.sass.cached == true
+
+  enabled: -> super() && _.size(@getSassFiles()) > 0
+
+  isCacheValid: ->
+    _.inject @getAllSassFiles(), true, (memo, file) =>
+      return false if memo == false
+      return memo unless @g.file.isFile(file)
+
+      !@fileCacheHasChanged(file)
+
+  # ------------------------------------------------------------
+
+  getAllSassFiles: ->
+    @_allSassFiles or= @g.file.expand(File.join(@getBasePath(), '**/*.{sass,scss}'))
+
+  getSassFiles: ->
+    @_sassFiles or= _.inject (@getAppConfig().css.files || []), [], (memo, file) =>
+      memo.push file if /\.(sass|scss)$/.test(file)
+      memo
 
   buildConfig: ->
-    sassConfig = @getConfig().cssSass
+    sassConfig = _.inject @getConfig().css.sass.options, {}, (memo, value, key) =>
+      return memo if value == 'undefined' || value == undefined
+      return memo if value == 'null' || value == null
 
-    changed = false
+      memo[key] = value
+      memo
 
-    @_.each @g.file.expand("#{@getAppConfig().css.basePath}/**/*.{sass,scss}"), (file) =>
-      return if changed == true
-      return if @fileCacheHasChanged(file) == false
-      changed = true
+    sassFiles = _.inject @getSassFiles(), [], (memo, filesEntry) =>
+      filesEntry = File.join(@getBasePath(), filesEntry)
+      filesEntry = @g.file.expand(filesEntry) if !@g.file.isFile(filesEntry)
+      filesEntry = [filesEntry] unless _.isArray(filesEntry)
 
-    return {} unless changed == true
+      memo.concat(filesEntry)
 
-    cfg                         = {}
-    cfg.options                 = {}
-    cfg.options.trace           = sassConfig.trace
-    cfg.options.cacheLocation   = sassConfig.cacheLocation
-    cfg.options.compass         = sassConfig.compass
-    cfg.options.debugInfo       = sassConfig.debugInfo
-    cfg.options.lineNumbers     = sassConfig.lineNumbers
-    cfg.options.precision       = sassConfig.precision
-    cfg.options.quiet           = sassConfig.quiet
-    cfg.options.sourcemap       = sassConfig.sourcemap
-    cfg.options.style           = sassConfig.style
-    cfg.options.update          = sassConfig.update
-    cfg.options.loadPath        = @_.clone(sassConfig.loadPath)
-    cfg.files                   = [{
-      expand: true
-      ext:    '.css'
-      src:    @getAppConfig().css.files.sassFiles || []
-      cwd:    "#{@getAppConfig().css.basePath}"
-      dest:   "#{@getConfig().tmp.css}/#{@getAppConfig().css.destFile}"
-    }]
+    tmpFile = File.join(@getTmpPath(), @getAppConfig().css.destFile)
 
+    cfg                   = {}
+    cfg.options           = sassConfig
+    cfg.options.loadPath  = _.clone(sassConfig.loadPath) || []
     cfg.options.loadPath.push @getAppConfig().css.basePath
+    cfg.files             = {}
+    cfg.files[tmpFile]    = sassFiles
 
-    @_.each @g.file.expand("#{@getAppConfig().css.basePath}/**/*.{sass,scss}"), (file) =>
-      @fileCacheUpdate(file)
+    _.each sassFiles, (file) => @fileCacheUpdate(file)
 
     cfg

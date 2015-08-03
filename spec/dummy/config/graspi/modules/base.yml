@@ -1,0 +1,209 @@
+dependencies:
+  - cached:jquery-2.1.4
+  - cached:json2-c98948ae19
+  - cached:backbone.babysitter-0.1.8
+  - cached:backbone.wreqr-1.3.3
+  - cached:marionette-2.4.2
+  - cached:requirejs-2.1.19
+  - cached:css-reset-2.5.1
+  - cached:css-social-buttons-1.1.1
+
+css:
+  concat:
+    includeDependencies: true
+
+js:
+  concat:
+    includeDependencies: true
+  coffee:
+    options:
+      bare: true
+
+images:
+  imagemin:
+    options:
+      gifInterlaced:          true
+      jpegProgressive:        true
+      pngOptimizationLevel:   3
+    usePlugins:
+      - jpegRecompressPlugin
+    plugins:
+      jpegRecompressPlugin:
+        loops:          6
+        accurate:       true
+        quality:        'high'
+        method:         'ssim'
+        target:         0.8
+        min:            70
+        max:            90
+        defish:         0
+        progressive:    true
+        subsample:      'default'
+
+fonts:
+  copy:
+    includeDependencies: true
+
+postpipeline:
+  manifest:
+    options:
+      path: 'spec/dummy/public/assets/g-assets.json'
+    replacePattern:
+      pattern: '^(\/)?spec\/dummy\/public\/'
+      replace: ''
+
+live:
+  watch:
+    groups:
+        css:
+          files:
+            - spec/dummy/app/assets/stylesheets/base/**/*.css
+          tasks:
+            - graspi_build_css
+        sass:
+          files:
+            - spec/dummy/app/assets/stylesheets/base/**/*.sass
+          tasks:
+            - graspi_build_sass
+        js:
+          files:
+            - spec/dummy/app/assets/javascripts/base/**/*.js
+          tasks:
+            - graspi_build_js
+        coffee:
+          files:
+            - spec/dummy/app/assets/javascripts/base/**/*.coffee
+          tasks:
+            - graspi_build_coffee
+        images:
+          files:
+            - spec/dummy/app/assets/images/base/**/*
+          tasks:
+            - graspi_build_images
+        templates:
+          files:
+            - spec/dummy/app/assets/templates/base/**/*
+          tasks:
+            - graspi_build_templates
+  browserSync:
+    bsFiles:
+      - spec/dummy/public/assets/g-development/base/**/*.css
+
+tasks:
+  graspi_build:
+    - graspi_images
+    - graspi_fonts
+    - graspi_templates
+    - graspi_css_copy
+    - graspi_css_sass_compile
+    - graspi_css_concat
+    - graspi_css_minify
+    - graspi_js_copy
+    - graspi_js_coffee_compile
+    - graspi_js_concat
+    - graspi_js_uglify
+    - graspi_filerev
+    - graspi_manifest
+    - graspi_css_replace_urls
+  graspi_build_css:
+    - graspi_css_copy
+    - graspi_css_concat
+    - graspi_filerev
+    - graspi_manifest
+    - graspi_css_replace_urls
+  graspi_build_sass:
+    - graspi_css_sass_compile
+    - graspi_css_concat
+    - graspi_filerev
+    - graspi_manifest
+    - graspi_css_replace_urls
+  graspi_build_js:
+    - graspi_js_copy
+    - graspi_js_concat
+    - graspi_filerev
+    - graspi_manifest
+    - graspi_css_replace_urls
+  graspi_build_coffee:
+    - graspi_js_coffee_compile
+    - graspi_js_concat
+    - graspi_filerev
+    - graspi_manifest
+    - graspi_css_replace_urls
+  graspi_build_images:
+    - graspi_images
+    - graspi_css_concat
+    - graspi_filerev
+    - graspi_manifest
+    - graspi_css_replace_urls
+  graspi_build_fonts:
+    - graspi_fonts
+    - graspi_css_concat
+    - graspi_filerev
+    - graspi_manifest
+    - graspi_css_replace_urls
+  graspi_build_templates:
+    - graspi_templates
+    - graspi_filerev
+    - graspi_manifest
+
+options:
+  destPath: 'spec/dummy/public/assets/g-development/base'
+  css:
+    basePath: 'spec/dummy/app/assets/stylesheets/base'
+    destFile: 'application.css'
+    files:
+      - 'application.sass'
+  js:
+    basePath: 'spec/dummy/app/assets/javascripts/base'
+    destFile: 'application.js'
+    files:
+      - '**/*.coffee'
+  templates:
+    basePath: 'spec/dummy/app/assets/templates/base'
+    destFile: 'templates.html'
+    files:
+      - '**/*.haml'
+      - '**/*.html'
+  images:
+    basePath: 'spec/dummy/app/assets/images/base'
+    files:
+      - '{,*/}*'
+  fonts:
+    basePath: 'spec/dummy/app/assets/fonts/base'
+    files: []
+
+
+
+environments:
+  development:
+    tasks:
+      graspi_build:
+        - graspi_images
+        - graspi_fonts
+        - graspi_templates
+        - graspi_css_copy
+        - graspi_css_sass_compile
+        - graspi_css_concat
+        - graspi_js_copy
+        - graspi_js_coffee_compile
+        - graspi_js_concat
+        - graspi_filerev
+        - graspi_manifest
+        - graspi_css_replace_urls
+  staging:
+    postpipeline:
+      filerevision:
+        digest:       true
+    options:
+      destPath: 'spec/dummy/public/assets/g-staging/base'
+  production:
+    js:
+      uglify:
+        options:
+          compress: true
+          preserveComments: false
+    postpipeline:
+      filerevision:
+        digest:       true
+    options:
+      destPath: 'spec/dummy/public/assets/g/base'

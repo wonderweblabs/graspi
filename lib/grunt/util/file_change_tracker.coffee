@@ -1,79 +1,20 @@
-_     = require('../util/lodash_extensions')
-fs    = require('fs')
-path  = require('path')
+fs        = require 'fs'
+path      = require 'path'
+_         = require './lodash_extensions'
+FCT       = require './class/file_change_tracker'
 
-tc          = {}
-tc.trackers = {}
+fcts          = {}
+JsonFile      = null
+FileChecksum  = null
 
-module.exports = (grunt, eac) ->
-  f = eac.appConfig.tmp.assetsTimestampsFile
+module.exports = (grunt, cacheFile, defaultScope = null) ->
+  unless _.isObject(JsonFile)
+    JsonFile = require('./json_file')(grunt)
 
-  tc.trackers[f] or= new ChangeTracker(grunt, eac)
+  unless _.isObject(FileChecksum)
+    FileChecksum = require('./file_checksum')(grunt)
 
-  return tc.trackers[f]
+  unless _.isObject(fcts[cacheFile])
+    fcts[cacheFile] = new FCT(_, fs, path, JsonFile, FileChecksum, grunt, cacheFile, defaultScope)
 
-class ChangeTracker
-
-  constructor: (grunt, eac) ->
-    @g    = grunt
-    @eac  = eac
-
-  clean: (scope = null) ->
-    @getTimestampsJson(scope, true)
-    @writeTimestampsFile()
-
-  hasChanged: (path, scope = null) ->
-    mtime       = @getCurrentTimestamp(path)
-    cachedMTime = @getTimestamp(path, scope)
-
-    cachedMTime.getTime() != mtime.getTime()
-
-  update: (path, scope = null) ->
-    mtime = @getCurrentTimestamp(path)
-
-    @getTimestampsJson(scope)[path] = mtime
-    @writeTimestampsFile()
-
-    mtime
-
-  getTimestamp: (path, scope = null) ->
-    mtime = @getTimestampsJson(scope)[path]
-    mtime = new Date(mtime) unless _.isEmpty(mtime)
-    mtime or= new Date(0)
-
-    mtime
-
-  getCurrentTimestamp: (path) ->
-    return new Date(0) unless @g.file.exists(path)
-
-    stats = fs.statSync(path)
-
-    return stats.mtime
-
-  getTimestampsJson: (scope = null, clearScope = false) ->
-    scope or= 'default'
-
-    @_timestampsJson or= @readTimestampsFile()
-    @_timestampsJson[scope] or= {}
-    @_timestampsJson[scope] = {} if clearScope == true
-
-    @_timestampsJson[scope]
-
-  readTimestampsFile: ->
-    try
-      @g.file.readJSON(
-        @eac.appConfig.tmp.assetsTimestampsFile,
-        { encoding: 'utf-8' }
-      )
-    catch e
-      {}
-
-  writeTimestampsFile: ->
-    @getTimestampsJson()
-    mapping = JSON.stringify(@_timestampsJson, null, 4)
-
-    @g.file.write(
-      @eac.appConfig.tmp.assetsTimestampsFile,
-      mapping,
-      { encoding: 'utf-8' }
-    )
+  return fcts[cacheFile]

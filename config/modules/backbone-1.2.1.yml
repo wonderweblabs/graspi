@@ -1,0 +1,15 @@
+dependencies:
+  - underscore-1.8.3
+
+tasks:
+  graspi_build:
+    - graspi_js_copy
+    - graspi_js_concat
+
+options:
+  basePath: 'bower_components/backbone'
+  destPath: 'tmp/graspi/build/backbone'
+  js:
+    destFile: 'backbone.js'
+    files:
+      - 'backbone.js'

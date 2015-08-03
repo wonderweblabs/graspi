@@ -1,13 +1,12 @@
 module.exports = class TaskHelper extends require('./abstract')
 
-  getCacheKey: ->
-    @_cacheKey
+  enabled: true
+
+  # ------------------------------------------------------------
 
   run: ->
-    @_cacheKey = "js-#{@eac.env_name}-#{@eac.app_name}"
-    @fileCacheClean()
-    @_cacheKey = "js-uglify-#{@eac.env_name}-#{@eac.app_name}"
-    @fileCacheClean()
-
-  isEnabled: ->
-    true
+    @fileCacheClean(@getCacheKey('js'))
+    @fileCacheClean(@getCacheKey('js-copy'))
+    @fileCacheClean(@getCacheKey('js-coffee_compile'))
+    @fileCacheClean(@getCacheKey('js-concat'))
+    @fileCacheClean(@getCacheKey('js-uglify'))

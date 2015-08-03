@@ -1,16 +1,34 @@
+_     = require 'lodash'
+File  = require 'path'
+
 module.exports = class TaskHelper extends require('./abstract')
 
-  getGruntTask: ->
-    'concat_sourcemap'
+  gruntTask: 'copy'
 
-  getGruntTaskTarget: ->
-    "graspi-css-copy-#{super()}"
+  gruntTaskTargetAppendix: 'graspi-css-copy'
 
-  isEnabled: ->
-    return false unless super() == true
-    return false unless @_.isObject(@getAppConfig().css.files)
+  cacheKeyAppendix: 'css-copy'
 
-    @_.isObject(@getAppConfig().css.files.cssFiles)
+  cached: -> @getConfig().css.copy.cached == true
+
+  enabled: -> super() && _.size(@getCssFiles()) > 0
+
+  isCacheValid: ->
+    _.inject @getCssFiles(), true, (memo, file) =>
+      return false if memo == false
+
+      file = File.join(@getBasePath(), file)
+      return !@fileCacheHasChanged(file) if @g.file.isFile(file)
+
+      _.inject @g.file.expand(file), true, (subMemo, subFile) =>
+        if subMemo == false then false else !@fileCacheHasChanged(subFile)
+
+  # ------------------------------------------------------------
+
+  getCssFiles: ->
+    @_cssFiles or= _.inject (@getAppConfig().css.files || []), [], (memo, file) =>
+      memo.push file if /\.css$/.test(file)
+      memo
 
   buildConfig: ->
     cfg                        = {}
@@ -19,15 +37,10 @@ module.exports = class TaskHelper extends require('./abstract')
     cfg.files                  = [{
       expand: true
       ext:    '.css'
-      src:    @getAppConfig().css.files.cssFiles || []
-      cwd:    "#{@getAppConfig().css.basePath}"
-      dest:   "#{@getConfig().tmp.css}/#{@getAppConfig().css.destFile}"
-      filter: (path) =>
-        changed = @fileCacheHasChanged(path)
-
-        @fileCacheUpdate(path) if changed == true
-
-        changed
+      src:    @getCssFiles()
+      cwd:    File.join(@getBasePath(), '/')
+      dest:   File.join(@getTmpPath(), '/')
+      filter: (file) => @fileCacheUpdateIfChanged(file)
     }]
 
     cfg

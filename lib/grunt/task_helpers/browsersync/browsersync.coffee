@@ -1,25 +1,49 @@
+_     = require 'lodash'
+File  = require 'path'
+
 module.exports = class TaskHelper extends require('./abstract')
 
-  isEnabled: ->
-    return false unless super() == true
-    return false unless @_.isObject(@getConfig().browserSync.bsFiles)
+  gruntTask: 'browserSync'
 
-    @_.size(@getConfig().browserSync.bsFiles.src) > 0
+  gruntTaskTargetAppendix: 'graspi-browsersync'
+
+  cacheKeyAppendix: 'css-browsersync'
+
+  cached: false
+
+  enabled: ->
+    super() &&
+    _.isArray(@getConfig().live.browserSync.bsFiles) &&
+    _.size(@getConfig().live.browserSync.bsFiles) > 0
+
+  # ------------------------------------------------------------
 
   run: ->
-    return unless @isEnabled()
+    return if @isEnabled() == false
+    return if @isCached() && @isCacheValid()
 
+    target = @getGruntTaskTarget().replace(/(\.|\:)/g, '-')
+
+    @g.config.set(@getGruntTask(), @buildConfig())
+    @g.task.run @getGruntTask()
+
+  buildConfig: ->
     cfg = @g.config.get('browserSync') || {}
     cfg.options or= {}
     cfg.bsFiles or= []
 
-    cfg.options = @_.merge {}, cfg.options, @buildBaseOptions()
-    cfg.bsFiles = @_.uniq(cfg.bsFiles.concat(@buildSrcArray()))
+    cfg.options = _.merge {}, cfg.options, @buildBaseOptions()
+    cfg.bsFiles = _.uniq(cfg.bsFiles.concat(@buildSrcArray()))
 
-    @g.config.merge({ browserSync: cfg })
+    cfg
 
   buildBaseOptions: ->
-    @getConfig().browserSync.options || {}
+    _.inject @getConfig().live.browserSync.options, {}, (memo, value, key) =>
+      return memo if value == 'undefined' || value == undefined
+      return memo if value == 'null' || value == null
+
+      memo[key] = value
+      memo
 
   buildSrcArray: ->
-    @getConfig().browserSync.bsFiles.src || []
+    @getConfig().live.browserSync.bsFiles || []

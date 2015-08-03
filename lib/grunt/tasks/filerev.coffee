@@ -1,13 +1,13 @@
-module.exports = (grunt, configPath) ->
+module.exports = (grunt, config, options) ->
 
-  taskRunner  = require('../util/task_runner')(grunt, configPath)
+  taskRunner  = require('../util/task_runner')(grunt, config, options)
 
-  grunt.registerTask 'graspi_filerev', (t1, t2) ->
-    taskRunner.runGraspiTask t1, t2, 'task_helpers/filerev/filerev'
+  grunt.registerTask 'graspi_filerev', (env_name, mod_name) ->
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'filerev/filerev'
 
-  grunt.registerTask 'graspi_filerev_clean', (t1, t2) ->
-    taskRunner.runGraspiTask t1, t2, 'task_helpers/filerev/clean'
+  grunt.registerTask 'graspi_filerev_clean', (env_name, mod_name) ->
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'filerev/clean'
 
-  grunt.registerTask 'graspi_filerev_clean_full', (t1, t2) ->
-    taskRunner.runGruntTask 'graspi_filerev_clean', t1, t2
-    taskRunner.runGraspiTask t1, t2, 'task_helpers/filerev/clean_full'
+  grunt.registerTask 'graspi_filerev_clean_full', (env_name, mod_name) ->
+    taskRunner.runGraspiTask env_name, mod_name, 'graspi_filerev_clean'
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'filerev/clean_full'

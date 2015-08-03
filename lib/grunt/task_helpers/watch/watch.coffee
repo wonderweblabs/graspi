@@ -1,40 +1,43 @@
+_ = require 'lodash'
+
 module.exports = class TaskHelper extends require('./abstract')
 
-  isEnabled: ->
-    return false unless super() == true
+  gruntTask: 'watch'
 
-    @_.isObject(@getConfig().watch.groups)
+  gruntTaskTargetAppendix: 'graspi-watch'
+
+  enabled: -> _.isObject(@getConfig().live.watch.groups)
+
+  # ------------------------------------------------------------
 
   run: ->
-    return unless @isEnabled()
+    return if @isEnabled() == false
+    return if @isCached() && @isCacheValid()
 
-    cfg = @g.config.get('watch') || {}
-    cfg = @_.merge {}, cfg, @buildConfig()
+    target = @getGruntTaskTarget().replace(/(\.|\:)/g, '-')
 
-    @g.config.merge({ watch: cfg })
+    @g.config.set(@getGruntTask(), @buildConfig())
+    @g.task.run @getGruntTask()
 
   buildConfig: ->
-    @setBaseWatchConfig()
+    watchConfig = _.inject @getConfig().live.watch.options, {}, (memo, value, key) =>
+      return memo if value == 'undefined' || value == undefined
+      return memo if value == 'null' || value == null
 
-    cfg = {}
+      memo[key] = value
+      memo
 
-    @_.each @getConfig().watch.groups, (group, group_name) =>
-      group_name = "#{@eac.env_name}-#{@eac.app_name}-#{group_name}"
+    cfg         = {}
+    cfg.options = watchConfig
+    cfg.files   = []
 
-      cfg[group_name]                 = {}
-      cfg[group_name].options         = {}
-      cfg[group_name].options.spawn   = @getConfig().watch.options.spawn
-      cfg[group_name].options.reload  = @getConfig().watch.options.reload
-      cfg[group_name].files           = group.files
-      cfg[group_name].tasks           = @_.map group.tasks, (task) =>
-        "#{task}:#{@eac.env_name}:#{@eac.app_name}"
+    _.each @getConfig().live.watch.groups, (group, group_name) =>
+      group_name = "#{@emc.env_name}-#{@emc.mod_name}-#{group_name}"
+
+      cfg[group_name]         = {}
+      cfg[group_name].options = watchConfig
+      cfg[group_name].files   = group.files
+      cfg[group_name].tasks   = _.map group.tasks, (task) =>
+        "graspi:#{@emc.env_name}:#{@emc.mod_name}:#{task}"
 
     cfg
-
-  setBaseWatchConfig: ->
-    cfg                     = {}
-    cfg.options             = {}
-    cfg.options.forever     = true
-    cfg.options.livereload  = @getConfig().watch.options.livereload
-
-    @g.config.merge({ watch: cfg })

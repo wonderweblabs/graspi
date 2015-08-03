@@ -1,39 +1,60 @@
+_     = require 'lodash'
+File  = require 'path'
+
 module.exports = class TaskHelper extends require('./abstract')
 
-  getGruntTask: ->
-    'coffee'
+  gruntTask: 'coffee'
 
-  getGruntTaskTarget: ->
-    "graspi-js-coffee_compile-#{super()}"
+  gruntTaskTargetAppendix: 'graspi-js-coffee_compile'
 
-  isEnabled: ->
-    return false unless super() == true
-    return false unless @_.isObject(@getAppConfig().js.files)
-    return false unless @getConfig().jsCoffee.enabled == true
+  cacheKeyAppendix: 'js-coffee_compile'
 
-    @_.isObject(@getAppConfig().js.files.coffeeFiles)
+  cached: -> @getConfig().js.coffee.cached == true
+
+  enabled: ->
+    super() &&
+    _.isArray(@getAppConfig().js.files) &&
+    _.size(@getCoffeeFiles()) > 0
+
+  isCacheValid: ->
+    _.inject @getCoffeeFiles(), true, (memo, file) =>
+      return false if memo == false
+
+      file = File.join(@getBasePath(), file)
+      return !@fileCacheHasChanged(file) if @g.file.isFile(file)
+
+      _.inject @g.file.expand(file), true, (subMemo, subFile) =>
+        if subMemo == false then false else !@fileCacheHasChanged(subFile)
+
+  # ------------------------------------------------------------
+
+  getCoffeeFiles: ->
+    @_coffeeFiles or= _.inject (@getAppConfig().js.files || []), [], (memo, file) =>
+      memo.push file if /\.coffee$/.test(file)
+      memo
 
   buildConfig: ->
-    coffeeConfig = @getConfig().jsCoffee
+    coffeeConfig = _.inject @getConfig().js.coffee.options, {}, (memo, value, key) =>
+      return memo if value == 'undefined' || value == undefined
+      return memo if value == 'null' || value == null
 
-    cfg                   = {}
-    cfg.options           = {}
-    cfg.options.bare      = coffeeConfig.bare
-    cfg.options.sourceMap = coffeeConfig.sourceMap
-    cfg.options.flatten   = false
+      memo[key] = value
+      memo
 
-    cfg.files = [{
-      expand: true
-      ext:    '.js'
-      src:    @getAppConfig().js.files.coffeeFiles || []
-      cwd:    "#{@getAppConfig().js.basePath}"
-      dest:   "#{@getConfig().tmp.js}/#{@getAppConfig().js.destFile}"
-      filter: (path) =>
-        changed = @fileCacheHasChanged(path)
+    coffeeFiles = _.inject @getCoffeeFiles(), [], (memo, filesEntry) =>
+      filesEntry = File.join(@getBasePath(), filesEntry)
+      filesEntry = @g.file.expand(filesEntry) if !@g.file.isFile(filesEntry)
+      filesEntry = [filesEntry] unless _.isArray(filesEntry)
 
-        @fileCacheUpdate(path) if changed == true
+      memo.concat(filesEntry)
 
-        changed
-    }]
+    tmpFile = File.join(@getTmpPath(), @getAppConfig().js.destFile)
+
+    cfg         = {}
+    cfg.options = coffeeConfig
+    cfg.files   = {}
+    cfg.files[tmpFile] = coffeeFiles
+
+    _.each coffeeFiles, (file) => @fileCacheUpdate(file)
 
     cfg

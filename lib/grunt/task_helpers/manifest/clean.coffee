@@ -1,9 +1,8 @@
 module.exports = class TaskHelper extends require('./abstract')
 
-  isEnabled: ->
-    true
+  enabled: true
+
+  # ------------------------------------------------------------
 
   run: ->
-    return unless @isEnabled()
-
     @fileCacheClean()

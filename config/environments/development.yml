@@ -1,0 +1,92 @@
+# tmp folder for modules
+# tmpPath: 'tmp/graspi'
+
+# graspi tasks cache file
+# cacheFile: 'tmp/graspi/files_cache_register.json'
+
+# graspi tasks built track file
+# modulesBuiltTrackFile: 'tmp/graspi/modules_built_track_register.json'
+
+
+# ------------------------------------------------------
+# css
+# ------------------------------------------------------
+css:
+  # grunt-concat-sourcemap
+  concat:
+    cached:             true
+  # grunt-contrib-copy
+  copy:
+    cached:             true
+  # grunt-contrib-sass
+  sass:
+    cached:             true
+  # grunt-contrib-less
+  less:
+    cached:             true
+  # grunt-contrib-cssmin and clean-css
+  minify:
+    cached:             true
+
+# ------------------------------------------------------
+# js
+# ------------------------------------------------------
+js:
+  # grunt-concat-sourcemap
+  copy:
+    cached:             true
+  # grunt-concat-sourcemap
+  concat:
+    cached:             true
+  # grunt-contrib-coffee
+  coffee:
+    cached:             true
+  # grunt-contrib-uglify
+  uglify:
+    cached:             true
+
+# ------------------------------------------------------
+# images
+# ------------------------------------------------------
+images:
+  # grunt-contrib-copy
+  copy:
+    cached:             true
+  # grunt-contrib-imagemin
+  imagemin:
+    cached:             true
+    usePlugins:         []
+
+# ------------------------------------------------------
+# fonts
+# ------------------------------------------------------
+fonts:
+  # grunt-contrib-copy
+  copy:
+    cached:             true
+
+# ------------------------------------------------------
+# postpipeline
+# ------------------------------------------------------
+postpipeline:
+  # custom implementation
+  filerevision:
+    digest:       false
+    cached:       true
+  # custom implementation
+  manifest:
+    cached:       true
+  # custom implementation
+  urlReplace:
+    cached:       true
+
+# ------------------------------------------------------
+# live
+# ------------------------------------------------------
+live:
+  # grunt-browser-sync
+  browserSync:
+    options:
+      proxy:          'localhost:3000'
+
+

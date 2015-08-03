@@ -36,9 +36,7 @@ module Graspi
     end
 
     def graspi_file_path(path)
-      mapping = Graspi.manifest(Rails.env)
-
-      mapping[path]
+      Graspi.manifest_resolve_path(::Rails.env, path)
     end
 
   end

@@ -1,0 +1,14 @@
+dependencies: []
+
+tasks:
+  graspi_build:
+    - graspi_css_copy
+    - graspi_css_concat
+
+options:
+  basePath: 'bower_components/css-reset'
+  destPath: 'tmp/graspi/build/css-reset'
+  css:
+    destFile: 'reset.css'
+    files:
+      - 'reset.css'

@@ -1,1 +1,1 @@
-Graspi.config_file = File.join(File.dirname(__FILE__), '../../../../graspi.yml')
+Graspi.config_file = File.join(Rails.root, 'tmp/graspi/config.yml')

@@ -5,15 +5,23 @@ if defined?(Rails)
   require "graspi/engine"
 
   require "graspi/helpers/assets_include_helper"
+  require 'graspi/rails'
 end
 
 require 'yaml'
 require 'json'
 
+require 'graspi/config'
+require 'graspi/manifest'
+
 module Graspi
 
   def self.root
     File.expand_path '../..', __FILE__
+  end
+
+  def self.grunt_root
+    self.config().options['gruntRoot']
   end
 
   def self.config_file
@@ -24,41 +32,18 @@ module Graspi
     @@config_file = config
   end
 
-  def self.config(env = nil)
-    @@config ||= begin
-      config = {}
-      config_yaml = YAML.load_file(self.config_file)
-
-      config_yaml['environments'].each do |env_name|
-        config[env_name] = config_yaml[env_name].clone
-      end
-
-      config_yaml['environments'].each do |env_name|
-        config_yaml.delete(env_name)
-      end
-
-      config_yaml['environments'].each do |env_name|
-        config[env_name] = config_yaml.clone.merge(config[env_name])
-      end
-
-      config
-    end
-
-    if env.nil?
-      @@config
-    else
-      @@config[env]
-    end
+  def self.config
+    @@config ||= Graspi::Config.new(self.config_file)
   end
 
-  def self.manifest_path(env)
-    File.join(Graspi.root, self.config(env)['manifest']['path'])
+  def self.manifest(env_name, mod_name)
+    self.config().manifest(env_name, mod_name)
   end
 
-  def self.manifest(env)
-    file = File.read(self.manifest_path(env))
+  def self.manifest_resolve_path(env_name, file)
+    file = file.split('/')
 
-    JSON.parse(file)[env]
+    self.manifest(env_name, file.shift).resolve_path(file.join('/'))
   end
 
 end
