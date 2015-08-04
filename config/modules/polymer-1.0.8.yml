@@ -1,0 +1,43 @@
+webcomponent: true
+
+dependencies:
+  - webcomponentsjs-0.7.7
+
+tasks:
+  graspi_build:
+    - graspi_templates_copy
+    - graspi_templates_concat
+    - graspi_replace
+
+options:
+  basePath: 'bower_components/polymer'
+  destPath: 'tmp/graspi/build/polymer/webcomponents'
+  templates:
+    destFile: 'polymer.html'
+    files:
+      - polymer-micro.html
+      - polymer-mini.html
+      - polymer.html
+  replace:
+    - files:
+        - 'tmp/graspi/build/polymer/webcomponents/polymer.html'
+      pattern:
+        pattern: '(?:\<link)(?:.*)(?:\>)'
+        modifiers: 'gm'
+        quotesPlaceholder: 'QUOTES1'
+        doubleQuotesPlaceholder: 'QUOTES2'
+      replace: ''
+    - files:
+        - 'tmp/graspi/build/polymer/webcomponents/polymer.html'
+      pattern:
+        # pattern: '(?!\n)$'
+        # pattern: '(\A){1}'
+        pattern: '<!--'
+        modifiers: ''
+        quotesPlaceholder: 'QUOTES1'
+        doubleQuotesPlaceholder: 'QUOTES2'
+      replace:
+        - '<script>'
+        - file: 'tmp/graspi/build/webcomponentsjs/webcomponents/webcomponents.js'
+        - '</script>'
+        - '<!--'

@@ -46,4 +46,10 @@ module Graspi
     self.manifest(env_name, file.shift).resolve_path(file.join('/'))
   end
 
+  def self.manifest_resolve_absolute_path(env_name, file)
+    file = file.split('/')
+
+    self.manifest(env_name, file.shift).resolve_absolute_path(file.join('/'))
+  end
+
 end

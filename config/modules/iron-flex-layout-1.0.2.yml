@@ -1,0 +1,27 @@
+webcomponent: true
+
+dependencies:
+  - polymer-1.0.8
+
+tasks:
+  graspi_build:
+    - graspi_templates_copy
+    - graspi_templates_concat
+    - graspi_replace
+
+options:
+  basePath: 'bower_components/iron-flex-layout'
+  destPath: 'tmp/graspi/build/iron-flex-layout/webcomponents'
+  templates:
+    destFile: 'iron-flex-layout.html'
+    files:
+      - iron-flex-layout.html
+  replace:
+    - files:
+        - 'tmp/graspi/build/iron-flex-layout/**/*.html'
+      pattern:
+        pattern: '(?:\<link)(?:.*)(?:\>)'
+        modifiers: 'g'
+        quotesPlaceholder: 'QUOTES1'
+        doubleQuotesPlaceholder: 'QUOTES2'
+      replace: ''

@@ -1,5 +1,6 @@
 _     = require 'lodash'
 File  = require 'path'
+Deps  = require '../../util/class/task_runner/dependencies'
 
 module.exports = class TaskHelper extends require('./abstract')
 
@@ -26,7 +27,24 @@ module.exports = class TaskHelper extends require('./abstract')
     return @_files if _.isArray(@_files)
 
     files = []
-    files = files.concat(@_appendForDependencies(files))
+
+    if @includeDependencies()
+      deps = new Deps(_, @g, @emc.config)
+      emcs = deps.buildDependenciesEmCList(@getEnvName(), @getModName())
+
+      _.each emcs, (dep_emc) =>
+        return if dep_emc.env_name == @getEnvName() && dep_emc.mod_name == @getModName()
+        return if dep_emc.emc.webcomponent == true
+        return unless _.isObject(dep_emc.emc.options.templates)
+        return unless _.isString(dep_emc.emc.options.templates.destFile)
+
+        destPath = dep_emc.emc.options.templates.destPath
+        destPath or= dep_emc.emc.options.destPath
+        destFile = File.join(destPath, dep_emc.emc.options.templates.destFile)
+        return unless @g.file.exists(destFile)
+
+        files.push(destFile)
+
     files = files.concat(@g.file.expand(File.join(@getTmpPath(), 'templates', '**/*.html')))
 
     @_files = _.uniq(files)
@@ -42,24 +60,3 @@ module.exports = class TaskHelper extends require('./abstract')
     cfg.dest              = @getDestFile()
 
     cfg
-
-  # ----------------------------------------------------------
-  # private
-
-  # @nodoc
-  _iterateDependencies: (eachFunc) ->
-    return unless @includeDependencies()
-
-    _.each @getDependencies().buildDependenciesEmCList(@getEnvName(), @getModName()), (emc) =>
-      return if emc.env_name == @getEnvName() && emc.mod_name == @getModName()
-
-      eachFunc(emc)
-
-  # @nodoc
-  _appendForDependencies: (files) ->
-    @_iterateDependencies (emc) =>
-      return if emc.env_name == @getEnvName() && emc.mod_name == @getModName()
-
-      files = files.concat(@g.file.expand(File.join(emc.emc.options.destPath, "**/*.html")))
-
-    files

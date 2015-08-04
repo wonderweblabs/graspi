@@ -18,6 +18,11 @@
     "css-social-buttons": "~1.1.1",
     "marionette": "~2.4.2",
     "css-reset": "~2.5.1",
-    "requirejs": "~2.1.19"
+    "requirejs": "~2.1.19",
+    "polymer": "Polymer/polymer#^1.0.0",
+    "paper-behaviors": "PolymerElements/paper-behaviors#^1.0.0",
+    "paper-styles": "PolymerElements/paper-styles#^1.0.0",
+    "paper-ripple": "PolymerElements/paper-ripple#^1.0.0",
+    "paper-checkbox": "git@github.com:PolymerElements/paper-checkbox.git#1.0.5"
   }
 }

@@ -7,6 +7,8 @@ cacheFile: 'tmp/graspi/files_cache_register.json'
 # graspi tasks built track file
 modulesBuiltTrackFile: 'tmp/graspi/modules_built_track_register.json'
 
+# for certain disabling features
+webcomponent: false
 
 # ------------------------------------------------------
 # css
@@ -202,7 +204,6 @@ templates:
   # grunt-haml
   haml:
     cached:             true
-    includeDependencies: false
     options:
       language: 'ruby'
       target: 'html'
@@ -214,6 +215,23 @@ templates:
   concat:
     cached:             true
     includeDependencies: false
+
+# ------------------------------------------------------
+# webcomponents
+# ------------------------------------------------------
+webcomponents:
+  # grunt-concat-sourcemap
+  concat:
+    cached:             true
+    includeDependencies: false
+
+# ------------------------------------------------------
+# replace
+# ------------------------------------------------------
+replace:
+  # grunt-replace
+  replace:
+    cached:       true
 
 # ------------------------------------------------------
 # postpipeline
@@ -310,19 +328,23 @@ tasks:
     - graspi_images_clean
     - graspi_fonts_clean
     - graspi_templates_clean
+    - graspi_webcomponents_clean
     - graspi_css_clean
     - graspi_js_clean
     - graspi_filerev_clean
     - graspi_manifest_clean
+    - graspi_replace_clean
     - graspi_build_clean
   graspi_clean_full:
     - graspi_images_clean_full
     - graspi_fonts_clean_full
     - graspi_templates_clean_full
+    - graspi_webcomponents_clean_full
     - graspi_css_clean_full
     - graspi_js_clean_full
     - graspi_filerev_clean_full
     - graspi_manifest_clean_full
+    - graspi_replace_clean_full
     - graspi_build_clean_full
   graspi_build_styles:
     - 'graspi_css_copy'
@@ -377,6 +399,10 @@ tasks:
     - 'graspi_filerev'
     - 'graspi_manifest'
     - 'graspi_css_replace_urls'
+  graspi_build_templates:
+    - graspi_templates
+    - graspi_filerev
+    - graspi_manifest
 
 # ------------------------------------------------------
 # environments

@@ -1,5 +1,7 @@
 - content_for :stylesheet_includes do
   = graspi_stylesheet_link_tag('base/application')
+  = graspi_html_link_tag('base/templates', inline: true)
+  = graspi_html_link_tag('base/webcomponents')
 
 - content_for :javascript_includes do
   = graspi_javascript_include_tag('base/application')

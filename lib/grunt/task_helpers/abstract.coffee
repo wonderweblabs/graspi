@@ -137,14 +137,18 @@ module.exports = class AbstractTaskHelper
 
 
   # Check file for changes
-  fileCacheHasChanged: (file) ->
+  fileCacheHasChanged: (file, cacheKey = null) ->
     return true unless @isCached()
 
-    @getFileCache().hasChanged(file, @getCacheKey())
+    cacheKey or= @getCacheKey()
+
+    @getFileCache().hasChanged(file, cacheKey)
 
   # Update file changes cache
-  fileCacheUpdate: (file) ->
-    @getFileCache().update(file, @getCacheKey())
+  fileCacheUpdate: (file, cacheKey = null) ->
+    cacheKey or= @getCacheKey()
+
+    @getFileCache().update(file, cacheKey)
 
     true
 
@@ -155,10 +159,14 @@ module.exports = class AbstractTaskHelper
     @getFileCache().cleanAll(cacheKey)
 
   # Check if changed, if changed, automatically update. if changed result
-  fileCacheUpdateIfChanged: (file) ->
-    return @fileCacheUpdate(file) if @fileCacheHasChanged(file)
+  fileCacheUpdateIfChanged: (file, cacheKey = null) ->
+    cacheKey or= @getCacheKey()
 
-    false
+    if @fileCacheHasChanged(file, cacheKey)
+      @fileCacheUpdate(file, cacheKey)
+      true
+    else
+      false
 
 
   # called by runner

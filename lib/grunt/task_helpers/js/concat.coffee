@@ -27,10 +27,19 @@ module.exports = class TaskHelper extends require('./abstract')
     if @includeDependencies()
       deps = new Deps(_, @g, @emc.config)
       emcs = deps.buildDependenciesEmCList(@getEnvName(), @getModName())
+
       _.each emcs, (dep_emc) =>
         return if dep_emc.env_name == @getEnvName() && dep_emc.mod_name == @getModName()
-        fs = @g.file.expand(File.join(dep_emc.emc.options.destPath, '**/*.js')) || []
-        files = files.concat(fs)
+        return if dep_emc.emc.webcomponent == true
+        return unless _.isObject(dep_emc.emc.options.js)
+        return unless _.isString(dep_emc.emc.options.js.destFile)
+
+        destPath = dep_emc.emc.options.js.destPath
+        destPath or= dep_emc.emc.options.destPath
+        destFile = File.join(destPath, dep_emc.emc.options.js.destFile)
+        return unless @g.file.exists(destFile)
+
+        files.push(destFile)
 
     files.concat @g.file.expand(File.join(@getTmpPath(), '**/*.js'))
 

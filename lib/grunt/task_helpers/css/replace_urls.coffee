@@ -51,11 +51,11 @@ module.exports = class TaskHelper extends require('./abstract')
       p.match = new RegExp(pattern.pattern, pattern.pattern.modifiers)
       p.replacement = (match) =>
         match   = match[0] if _.isArray(match)
-        result  = match.match(/image\-url\((?:\"|\')(.*)(?:\"|\')\)/)
+        result  = match.match(new RegExp(pattern.pattern))
         file    = result[1] if _.isArray(result) && _.isString(result[1])
 
         return match if _.isEmpty(mapping[file])
-        return "url('#{mapping[file]}')" if _.isEmpty(@getAssetHost())
+        return "url('/#{mapping[file]}')" if _.isEmpty(@getAssetHost())
 
         host = @getAssetHost().replace(/\/$/, '')
 

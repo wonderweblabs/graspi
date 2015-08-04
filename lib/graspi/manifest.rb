@@ -18,5 +18,11 @@ module Graspi
       @config[File.join(@mod_name, file)]
     end
 
+    def resolve_absolute_path(file)
+      path = resolve_path(file)
+
+      File.join(::Rails.root, 'public', path)
+    end
+
   end
 end

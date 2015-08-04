@@ -1,0 +1,75 @@
+webcomponent: true
+
+dependencies:
+  - paper-checkbox-1.0.5
+
+js:
+  coffee:
+    options:
+      bare: true
+      sourceMap: false
+
+tasks:
+  graspi_build:
+    - graspi_css_sass_compile
+    - graspi_css_concat
+    - graspi_js_coffee_compile
+    - graspi_js_concat
+    - graspi_templates
+    - graspi_replace
+
+options:
+  basePath: 'spec/dummy/app/assets/webcomponents/cmi-checkbox'
+  destPath: 'tmp/graspi/build/cmi-checkbox/webcomponents'
+  css:
+    destFile: 'cmi-checkbox.css'
+    files:
+      - 'cmi-checkbox.sass'
+  js:
+    destFile: 'cmi-checkbox.js'
+    files:
+      - cmi-checkbox.coffee
+  templates:
+    destFile: 'cmi-checkbox.html'
+    files:
+      - cmi-checkbox.html.haml
+  replace:
+    - files:
+        - 'tmp/graspi/build/cmi-checkbox/webcomponents/cmi-checkbox.html'
+      pattern:
+        pattern: '(\<graspi-webcomponent\-stylesheet\>)'
+        modifiers: 'g'
+        quotesPlaceholder: 'QUOTES1'
+        doubleQuotesPlaceholder: 'QUOTES2'
+      replace:
+        - '<style>'
+        - file: 'tmp/graspi/build/cmi-checkbox/webcomponents/cmi-checkbox.css'
+        - '</style>'
+    - files:
+        - 'tmp/graspi/build/cmi-checkbox/webcomponents/cmi-checkbox.html'
+      pattern:
+        pattern: '(\<graspi\-webcomponent\-script\>)'
+        modifiers: 'g'
+        quotesPlaceholder: 'QUOTES1'
+        doubleQuotesPlaceholder: 'QUOTES2'
+      replace:
+        - '<script>'
+        - file: 'tmp/graspi/build/cmi-checkbox/webcomponents/cmi-checkbox.js'
+        - '</script>'
+    - files:
+        - 'tmp/graspi/build/cmi-checkbox/webcomponents/cmi-checkbox.html'
+      pattern:
+        pattern: '^((?:\/\*)(?:.*)(?:\*\/))$'
+        modifiers: 'gm'
+        quotesPlaceholder: 'QUOTES1'
+        doubleQuotesPlaceholder: 'QUOTES2'
+      replace: ''
+    - files:
+        - 'tmp/graspi/build/cmi-checkbox/webcomponents/cmi-checkbox.html'
+      pattern:
+        pattern: '(\n\n)|(^(?:.*)(?:sourceMappingURL)(?:.*))'
+        modifiers: 'gm'
+        quotesPlaceholder: 'QUOTES1'
+        doubleQuotesPlaceholder: 'QUOTES2'
+      replace: ''
+

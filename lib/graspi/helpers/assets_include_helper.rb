@@ -25,6 +25,27 @@ module Graspi
       }.join("\n").html_safe
     end
 
+    def graspi_html_link_tag(*sources)
+      options = sources.extract_options!.stringify_keys
+      inline = options.delete('inline')
+
+      if inline == true
+        sources.uniq.map { |source|
+          file = graspi_file_absolute_path("#{source}.html")
+
+          File.read(file)
+        }.join("\n").html_safe
+      else
+        sources.uniq.map { |source|
+          tag_options = {
+            "rel" => "import",
+            "href" => graspi_file_path("#{source}.html")
+          }.merge!(options)
+          tag(:link, tag_options)
+        }.join("\n").html_safe
+      end
+    end
+
     def graspi_image_url(path)
       graspi_file_path(path)
     end
@@ -37,6 +58,10 @@ module Graspi
 
     def graspi_file_path(path)
       Graspi.manifest_resolve_path(::Rails.env, path)
+    end
+
+    def graspi_file_absolute_path(path)
+      Graspi.manifest_resolve_absolute_path(::Rails.env, path)
     end
 
   end
