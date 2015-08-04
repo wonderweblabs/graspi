@@ -10,16 +10,15 @@ tasks:
     - graspi_replace
 
 options:
-  basePath: 'bower_components/iron-flex-layout'
-  destPath: 'tmp/graspi/build/iron-flex-layout/webcomponents'
+  basePath: 'bower_components/iron-meta'
+  destPath: 'tmp/graspi/build/iron-meta/webcomponents'
   templates:
-    destFile: 'iron-flex-layout.html'
+    destFile: 'iron-meta.html'
     files:
-      - iron-flex-layout.html
-      - classes/iron-shadow-flex-layout.html
+      - iron-meta.html
   replace:
     - files:
-        - 'tmp/graspi/build/iron-flex-layout/**/*.html'
+        - 'tmp/graspi/build/iron-meta/webcomponents/iron-meta.html'
       pattern:
         pattern: '(?:\<link)(?:.*)(?:\>)'
         modifiers: 'g'

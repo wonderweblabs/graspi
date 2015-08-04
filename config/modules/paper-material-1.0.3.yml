@@ -2,6 +2,7 @@ webcomponent: true
 
 dependencies:
   - polymer-1.0.8
+  - paper-styles-1.0.11
 
 tasks:
   graspi_build:
@@ -10,19 +11,20 @@ tasks:
     - graspi_replace
 
 options:
-  basePath: 'bower_components/iron-flex-layout'
-  destPath: 'tmp/graspi/build/iron-flex-layout/webcomponents'
+  basePath: 'bower_components/paper-material'
+  destPath: 'tmp/graspi/build/paper-material/webcomponents'
   templates:
-    destFile: 'iron-flex-layout.html'
+    destFile: 'paper-material.html'
     files:
-      - iron-flex-layout.html
-      - classes/iron-shadow-flex-layout.html
+      - paper-material.html
   replace:
     - files:
-        - 'tmp/graspi/build/iron-flex-layout/**/*.html'
+        - 'tmp/graspi/build/paper-material/webcomponents/paper-material.html'
       pattern:
         pattern: '(?:\<link)(?:.*)(?:\>)'
         modifiers: 'g'
         quotesPlaceholder: 'QUOTES1'
         doubleQuotesPlaceholder: 'QUOTES2'
       replace: ''
+
+

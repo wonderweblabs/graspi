@@ -2,6 +2,7 @@ webcomponent: true
 
 dependencies:
   - polymer-1.0.8
+  - iron-meta-1.0.3
 
 tasks:
   graspi_build:
@@ -10,16 +11,15 @@ tasks:
     - graspi_replace
 
 options:
-  basePath: 'bower_components/iron-flex-layout'
-  destPath: 'tmp/graspi/build/iron-flex-layout/webcomponents'
+  basePath: 'bower_components/iron-iconset-svg'
+  destPath: 'tmp/graspi/build/iron-iconset-svg/webcomponents'
   templates:
-    destFile: 'iron-flex-layout.html'
+    destFile: 'iron-iconset-svg.html'
     files:
-      - iron-flex-layout.html
-      - classes/iron-shadow-flex-layout.html
+      - iron-iconset-svg.html
   replace:
     - files:
-        - 'tmp/graspi/build/iron-flex-layout/**/*.html'
+        - 'tmp/graspi/build/iron-iconset-svg/webcomponents/iron-iconset-svg.html'
       pattern:
         pattern: '(?:\<link)(?:.*)(?:\>)'
         modifiers: 'g'

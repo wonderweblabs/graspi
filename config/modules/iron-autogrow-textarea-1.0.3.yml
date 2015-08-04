@@ -2,6 +2,10 @@ webcomponent: true
 
 dependencies:
   - polymer-1.0.8
+  - iron-form-element-behavior-1.0.3
+  - iron-validatable-behavior-1.0.4
+  - iron-flex-layout-1.0.2
+  - iron-behaviors-1.0.5
 
 tasks:
   graspi_build:
@@ -10,16 +14,15 @@ tasks:
     - graspi_replace
 
 options:
-  basePath: 'bower_components/iron-flex-layout'
-  destPath: 'tmp/graspi/build/iron-flex-layout/webcomponents'
+  basePath: 'bower_components/iron-input'
+  destPath: 'tmp/graspi/build/iron-input/webcomponents'
   templates:
-    destFile: 'iron-flex-layout.html'
+    destFile: 'iron-input.html'
     files:
-      - iron-flex-layout.html
-      - classes/iron-shadow-flex-layout.html
+      - iron-input.html
   replace:
     - files:
-        - 'tmp/graspi/build/iron-flex-layout/**/*.html'
+        - 'tmp/graspi/build/iron-input/webcomponents/iron-input.html'
       pattern:
         pattern: '(?:\<link)(?:.*)(?:\>)'
         modifiers: 'g'
