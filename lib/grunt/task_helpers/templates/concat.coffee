@@ -45,7 +45,11 @@ module.exports = class TaskHelper extends require('./abstract')
 
         files.push(destFile)
 
-    files = files.concat(@g.file.expand(File.join(@getTmpPath(), 'templates', '**/*.html')))
+    emcFiles = _.map (@getAppConfig().templates.files || []), (file) =>
+      file = file.replace(/haml$/, 'html')
+      File.join(@getTmpPath(), 'templates', file)
+
+    files = files.concat(emcFiles)
 
     @_files = _.uniq(files)
 

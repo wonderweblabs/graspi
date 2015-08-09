@@ -13,6 +13,11 @@ module.exports = class TaskHelper extends require('./abstract')
 
   enabled: -> super() && _.isArray(@getAppConfig().replace)
 
+  isCacheValid: ->
+    !_.any @getAppConfig().replace, (replaceConfig, index) =>
+      _.any @getFiles(replaceConfig), (f) =>
+          @fileCacheHasChanged(f, "#{@getCacheKey()}-#{index}")
+
   # ------------------------------------------------------------
 
   run: ->
@@ -21,6 +26,7 @@ module.exports = class TaskHelper extends require('./abstract')
 
     _.each @getAppConfig().replace, (replaceConfig, index) =>
       replaceConfig.cid = index
+
       target = "#{@getGruntTaskTarget()}-#{replaceConfig.cid}"
       target = target.replace(/(\.|\:)/g, '-')
 
@@ -28,8 +34,15 @@ module.exports = class TaskHelper extends require('./abstract')
       @g.task.run "#{@getGruntTask()}:#{target}"
 
   buildConfig: (replaceConfig) ->
+    config = _.inject @getConfig().replace.replace.options, {}, (memo, value, key) =>
+      return memo if value == 'undefined' || value == undefined
+      return memo if value == 'null' || value == null
+
+      memo[key] = value
+      memo
+
     cfg                   = {}
-    cfg.options           = {}
+    cfg.options           = config
     cfg.options.patterns  = []
 
     cfg.options.patterns.push
@@ -40,7 +53,6 @@ module.exports = class TaskHelper extends require('./abstract')
     cfg.files.push
       expand: true
       src:    @getFiles(replaceConfig)
-      filter: (file) => @fileCacheUpdateIfChanged(file, "#{@getCacheKey()}-#{replaceConfig.cid}")
 
     cfg
 
@@ -48,15 +60,32 @@ module.exports = class TaskHelper extends require('./abstract')
     replaceConfig.files
 
   getPatternReplace: (replaceConfig) ->
-    if _.isArray(replaceConfig.replace)
+    if _.isString(replaceConfig.replace)
+      return replaceConfig.replace
+
+    else if _.isArray(replaceConfig.replace)
       entries = _.map replaceConfig.replace, (replaceEntry) =>
         if _.isObject(replaceEntry) && _.isString(replaceEntry.file)
           @g.file.read(replaceEntry.file)
         else
           replaceEntry
-      entries.join('\n')
+
+      return entries.join('\n')
+
+    else if _.isObject(replaceConfig.replace) && replaceConfig.replace.type == 'self'
+      prepend = replaceConfig.replace.prepend || ''
+      append = replaceConfig.replace.append || ''
+
+      prepend = '\n\r' if prepend == 'NEWLINE'
+      append = '\n\r' if append == 'NEWLINE'
+
+      func = (match) ->
+        "#{prepend}#{match}#{append}"
+
+      return func
+
     else
-      replaceConfig.replace
+      return replaceConfig.replace
 
   getPatternPattern: (replaceConfig) ->
     pattern = @_normalizePattern(replaceConfig.pattern)

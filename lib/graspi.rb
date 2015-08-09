@@ -1,18 +1,5 @@
-# for rails
-if defined?(Rails)
-  require 'rails/all'
-
-  require "graspi/engine"
-
-  require "graspi/helpers/assets_include_helper"
-  require 'graspi/rails'
-end
-
 require 'yaml'
 require 'json'
-
-require 'graspi/config'
-require 'graspi/manifest'
 
 module Graspi
 
@@ -51,5 +38,11 @@ module Graspi
 
     self.manifest(env_name, file.shift).resolve_absolute_path(file.join('/'))
   end
+
+  require 'graspi/rails' if defined?(Rails)
+  require 'graspi/middleman' if defined?(Middleman)
+
+  require 'graspi/config'
+  require 'graspi/manifest'
 
 end

@@ -6,7 +6,7 @@ module Graspi
     # add graspi helpers to app
     initializer 'graspi.add_helpers' do |app|
       ActiveSupport.on_load(:action_view) do
-        include Graspi::AssetsIncludeHelper
+        include Graspi::Rails::AssetsIncludeHelper
       end
     end
 

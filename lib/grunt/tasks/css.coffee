@@ -23,6 +23,9 @@ module.exports = (grunt, config, options) ->
   grunt.registerTask 'graspi_css_replace_urls', (env_name, mod_name) ->
     taskRunner.runGraspiTaskHelper env_name, mod_name, 'css/replace_urls'
 
+  grunt.registerTask 'graspi_css_polymer_mixin_replace', (env_name, mod_name) ->
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'css/polymer_mixin_replace'
+
   grunt.registerTask 'graspi_css_clean', (env_name, mod_name) ->
     taskRunner.runGraspiTaskHelper env_name, mod_name, 'css/clean'
 

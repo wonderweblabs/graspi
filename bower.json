@@ -18,14 +18,6 @@
     "css-social-buttons": "~1.1.1",
     "marionette": "~2.4.2",
     "css-reset": "~2.5.1",
-    "requirejs": "~2.1.19",
-    "polymer": "Polymer/polymer#^1.0.0",
-    "paper-behaviors": "PolymerElements/paper-behaviors#^1.0.0",
-    "paper-styles": "PolymerElements/paper-styles#^1.0.0",
-    "paper-ripple": "PolymerElements/paper-ripple#^1.0.0",
-    "paper-checkbox": "PolymerElements/paper-checkbox#1.0.5",
-    "paper-button": "PolymerElements/paper-button#1.0.3",
-    "paper-fab": "PolymerElements/paper-fab#1.0.3",
-    "paper-input": "PolymerElements/paper-input#1.0.8"
+    "requirejs": "~2.1.19"
   }
 }

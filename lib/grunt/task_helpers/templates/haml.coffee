@@ -28,6 +28,7 @@ module.exports = class TaskHelper extends require('./abstract')
   getFiles: ->
     @_files or= _.inject (@getAppConfig().templates.files || []), [], (memo, file) =>
       memo.push file if /\.haml$/.test(file)
+      memo.push file if /\.hamlc$/.test(file)
       memo
 
   getFilesExpanded: ->

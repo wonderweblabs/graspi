@@ -10,11 +10,11 @@ module Graspi
     end
 
     def env(env_name)
-      @merged_config['environments'][env_name]
+      @merged_config['environments'][env_name.to_s]
     end
 
     def emc_config(env_name, mod_name)
-      env(env_name)['modules'][mod_name]
+      env(env_name)['modules'][mod_name.to_s]
     end
 
     def grunt_root

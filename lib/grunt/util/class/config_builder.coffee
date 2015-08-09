@@ -7,8 +7,9 @@ module.exports = class GraspiConfigBuilder
     @g              = grunt
     @File           = File
     @_options       = options
-    @configTmpFile        = options.configTmpFile
-    @projectConfigFolder  = options.projectConfigFolder
+    @configTmpFile    = options.configTmpFile
+    @configLoadPaths  = options.configLoadPaths
+    # @projectConfigFolder  = options.projectConfigFolder
 
   getJsonFileHandler: ->
     @_jsonFileHandler or= require('../json_file')(@g)
@@ -27,33 +28,24 @@ module.exports = class GraspiConfigBuilder
 
     return config unless @_hasConfigChanged(config)
 
-    tmpCfgs     = {}
+    configs     = []
     finalConfig = {
       options: @_options
     }
 
-    tmpCfgs =
-      graspi:
-        defaults:     @_loadDefaultsFromFile('graspi')
-        environments: @_loadEnvironmentsFromFolder('graspi')
-        modules:      @_loadModulesFromFolder('graspi')
-      project:
-        defaults: {}
-        environments: {}
-        modules: {}
+    @_.each @configLoadPaths, (configLoadPath) =>
+      tmpCfg =
+        defaults:     @_loadDefaultsFromFile(configLoadPath)#'graspi')
+        environments: @_loadEnvironmentsFromFolder(configLoadPath)#'graspi')
+        modules:      @_loadModulesFromFolder(configLoadPath)#'graspi')
 
-    if @_.isString(@projectConfigFolder) && @projectConfigFolder.length > 0
-      tmpCfgs.project.defaults =      @_loadDefaultsFromFile('project')
-      tmpCfgs.project.environments =  @_loadEnvironmentsFromFolder('project')
-      tmpCfgs.project.modules =       @_loadModulesFromFolder('project')
+      @_collectEnvironmentsAndModules(tmpCfg, finalConfig)
+      configs.push tmpCfg
 
-    @_collectEnvironmentsAndModules(tmpCfgs['graspi'], finalConfig)
-    @_collectEnvironmentsAndModules(tmpCfgs['project'], finalConfig)
-
-    @_.each ['graspi', 'project'], (type) =>
-      @_mergeDefaults(tmpCfgs[type].defaults, finalConfig)
-      @_mergeEnvironments(tmpCfgs[type].environments, finalConfig)
-      @_mergeModules(tmpCfgs[type].modules, finalConfig)
+    @_.each configs, (tmpCfg) =>
+      @_mergeDefaults(tmpCfg.defaults, finalConfig)
+      @_mergeEnvironments(tmpCfg.environments, finalConfig)
+      @_mergeModules(tmpCfg.modules, finalConfig)
 
     @_updateChangeTracker(@_loadConfigFilesList())
     @_persistCachedConfig(finalConfig)
@@ -80,16 +72,16 @@ module.exports = class GraspiConfigBuilder
     return @_haveFilesChanged(fsConfigFiles)
 
   # @nodoc
-  _loadDefaultsFromFile: (type) ->
-    file = @File.join(@_getFolderByType(type), 'defaults.yml')
+  _loadDefaultsFromFile: (folderPath) ->
+    file = @File.join(folderPath, 'defaults.yml')
 
     return {} unless @g.file.exists(file)
 
     @getYamlFileHandler().read(file) || {}
 
   # @nodoc
-  _loadEnvironmentsFromFolder: (type) ->
-    folder = @File.join(@_getFolderByType(type), 'environments')
+  _loadEnvironmentsFromFolder: (folderPath) ->
+    folder = @File.join(folderPath, 'environments')
 
     return {} unless @g.file.exists(folder)
 
@@ -99,8 +91,8 @@ module.exports = class GraspiConfigBuilder
       memo
 
   # @nodoc
-  _loadModulesFromFolder: (type) ->
-    folder = @File.join(@_getFolderByType(type), 'modules')
+  _loadModulesFromFolder: (folderPath) ->
+    folder = @File.join(folderPath, 'modules')
 
     return {} unless @g.file.exists(folder)
 
@@ -220,20 +212,8 @@ module.exports = class GraspiConfigBuilder
     @getJsonFileHandler().write(@configTmpFile, mapping)
 
   # @nodoc
-  _getFolderByType: (type) ->
-    if type == 'graspi'
-      @File.join(__dirname, '../../../../config')
-    else if @_.isString(@projectConfigFolder)
-      @projectConfigFolder.replace(/(\/)?$/, '')
-    else
-      null
-
-  # @nodoc
   _loadConfigFilesList: ->
-    configFolders = [@_getFolderByType('graspi')]
-    configFolders.push @_getFolderByType('project') if @_.isString(@projectConfigFolder)
-
-    fsConfigFiles = @_.inject configFolders, [], (memo, folder) =>
+    fsConfigFiles = @_.inject @configLoadPaths, [], (memo, folder) =>
       memo = memo.concat(@g.file.expand({filter: 'isFile'}, "#{folder}/{,*/}*"))
       memo
 

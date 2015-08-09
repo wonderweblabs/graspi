@@ -12,13 +12,16 @@
 module.exports = (grunt, options = {}) ->
 
   # gruntRoot
-  options.gruntRoot or= require('path').join(__dirname, '..')
+  options.gruntRoot or= require('path').join(__dirname, '../..')
 
   # configTmpFile
   options.configTmpFile or= 'tmp/graspi/config.yml'
 
   # projectConfigFolder
-  # options.projectConfigFolder = null
+  options.configLoadPaths or= []
+  options.configLoadPaths = [
+    require('path').join(__dirname, '../..', 'config')
+  ].concat(options.configLoadPaths)
 
   # tasksLoadPaths
   options.tasksLoadPaths or= []
@@ -29,6 +32,7 @@ module.exports = (grunt, options = {}) ->
   config      = require('./util/config')(grunt, options)
   taskRunner  = require('./util/task_runner')(grunt, config, options)
 
+  # task files
   require('./tasks/images')(grunt, config)
   require('./tasks/fonts')(grunt, config, options)
   require('./tasks/templates')(grunt, config, options)
@@ -40,8 +44,10 @@ module.exports = (grunt, options = {}) ->
   require('./tasks/manifest')(grunt, config)
   require('./tasks/live')(grunt, config)
 
+  # basic graspi task
   grunt.registerTask 'graspi', (env_name, mod_name, task_name) ->
     if task_name == 'clean'
+      taskRunner.runGraspiTask env_name, mod_name, task_name, false, 'clean', false
       taskRunner.runGraspiTask env_name, mod_name, task_name, true, 'clean', false
     else if task_name == 'clean_full'
       taskRunner.runGraspiTask env_name, mod_name, task_name, true, 'clean_full', false

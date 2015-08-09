@@ -14,3 +14,6 @@ module.exports = class AbstractTaskHelper extends require('../abstract')
 
   getDestFilePath: ->
     File.join(@getDestPath(), @getAppConfig().css.destFile)
+
+  getDestFile: ->
+    @getDestFilePath()

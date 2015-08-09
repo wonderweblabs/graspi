@@ -85,6 +85,9 @@ css:
       semanticMerging:        false
       shorthandCompacting:    false
       sourceMapInlineSources: false
+  # grunt-replace
+  polymerMixinReplace:
+    cached:             true
 
 # ------------------------------------------------------
 # js
@@ -232,6 +235,9 @@ replace:
   # grunt-replace
   replace:
     cached:       true
+  options:
+    excludeBuiltins:  true
+    force:            true
 
 # ------------------------------------------------------
 # postpipeline

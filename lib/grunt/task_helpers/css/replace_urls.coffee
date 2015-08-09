@@ -48,18 +48,31 @@ module.exports = class TaskHelper extends require('./abstract')
 
     _.each patterns, (pattern) =>
       p       = {}
-      p.match = new RegExp(pattern.pattern, pattern.pattern.modifiers)
+      p.match = new RegExp(pattern.pattern, pattern.modifiers)
       p.replacement = (match) =>
         match   = match[0] if _.isArray(match)
         result  = match.match(new RegExp(pattern.pattern))
         file    = result[1] if _.isArray(result) && _.isString(result[1])
 
+        # params
+        params = file.split('?')
+        if _.size(params) > 1
+          file = params[0]
+          params = params[1]
+        else
+          params = ''
+
         return match if _.isEmpty(mapping[file])
-        return "url('/#{mapping[file]}')" if _.isEmpty(@getAssetHost())
+
+        path = [mapping[file]]
+        path.push params if params.length > 0
+        path = path.join('?')
+
+        return "url('/#{path}')" if _.isEmpty(@getAssetHost())
 
         host = @getAssetHost().replace(/\/$/, '')
 
-        "url('#{host}/#{mapping[file]}')"
+        "url('#{host}/#{path}')"
 
       cfg.options.patterns.push p
 

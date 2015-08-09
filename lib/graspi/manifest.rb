@@ -7,7 +7,7 @@ module Graspi
       @env_name = env_name
       @mod_name = mod_name
 
-      @config = JSON.parse(json)[env_name]
+      @config = JSON.parse(json)[env_name.to_s]
     end
 
     def config
@@ -15,7 +15,7 @@ module Graspi
     end
 
     def resolve_path(file)
-      @config[File.join(@mod_name, file)]
+      @config[File.join(@mod_name, file).to_s]
     end
 
     def resolve_absolute_path(file)

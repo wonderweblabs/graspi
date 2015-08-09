@@ -9,7 +9,9 @@ module.exports = (grunt) ->
   graspi = require('./lib/grunt/graspi')(grunt,
     gruntRoot:            dir
     configTmpFile:        File.join(dir, 'spec/dummy/tmp/graspi/config.yml')
-    projectConfigFolder:  File.join(dir, 'spec/dummy/config/graspi')
+    configLoadPaths:      [
+      File.join(dir, 'spec/dummy/config/graspi')
+    ]
     tasksLoadPaths:       []
   )
 
