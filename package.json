@@ -18,6 +18,7 @@
     "pipeline"
   ],
   "files": [
+    "config",
     "lib/grunt"
   ],
   "repository": {
