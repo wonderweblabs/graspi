@@ -35,9 +35,9 @@ module.exports = class GraspiConfigBuilder
 
     @_.each @configLoadPaths, (configLoadPath) =>
       tmpCfg =
-        defaults:     @_loadDefaultsFromFile(configLoadPath)#'graspi')
-        environments: @_loadEnvironmentsFromFolder(configLoadPath)#'graspi')
-        modules:      @_loadModulesFromFolder(configLoadPath)#'graspi')
+        defaults:     @_loadDefaultsFromFile(configLoadPath)
+        environments: @_loadEnvironmentsFromFolder(configLoadPath)
+        modules:      @_loadModulesFromFolder(configLoadPath)
 
       @_collectEnvironmentsAndModules(tmpCfg, finalConfig)
       configs.push tmpCfg

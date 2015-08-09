@@ -15,7 +15,7 @@ module Graspi
     end
 
     def resolve_path(file)
-      @config[File.join(@mod_name, file).to_s]
+      File.join '/', @config[File.join(@mod_name, file).to_s]
     end
 
     def resolve_absolute_path(file)
