@@ -112,7 +112,7 @@ module.exports = class GraspiConfig
     return target1 if _.includes environments, target1
     return target2 if _.includes environments, target2
 
-    @getDefaultEnvironment()
+    @getEnv()
 
   saveFileCacheTrackers: ->
     _.each @_fileCacheTrackers, (fct) =>

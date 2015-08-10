@@ -19,7 +19,10 @@ module.exports = class GraspiConfigBuilder
     @_yamlFileHandler or= require('../yaml_file')(@grunt)
 
   getFileChangeTracker: ->
-    @_fileChangeTracker or= require('../file_change_tracker')(@grunt, @getConfigCacheFile(), 'configFiles')
+    file = @getConfigCacheFile().replace(/\.yml$/, '')
+    file += '-cfg.yml'
+
+    @_fileChangeTracker or= require('../file_change_tracker')(@grunt, file)
 
   configure: ->
     @prepareConfigInstance(@load())
@@ -34,7 +37,6 @@ module.exports = class GraspiConfigBuilder
       options: @_options
     }
 
-    console.log @getConfigLoadPaths()
     _.each @getConfigLoadPaths(), (configLoadPath) =>
       tmpCfg =
         defaults:     @_loadDefaultsFromFile(configLoadPath)
@@ -204,7 +206,8 @@ module.exports = class GraspiConfigBuilder
 
   # @nodoc
   _updateChangeTracker: (files) ->
-    @getFileChangeTracker().update(files)
+    @getFileChangeTracker().update(files, 'configFiles')
+    @getFileChangeTracker().persist()
 
   # @nodoc
   _persistCachedConfig: (config) ->
@@ -225,6 +228,5 @@ module.exports = class GraspiConfigBuilder
   _haveFilesChanged: (files) ->
     _.inject files, false, (memo, file) =>
       return memo if memo == true
-
-      @getFileChangeTracker().hasChanged(file)
+      @getFileChangeTracker().hasChanged(file, 'configFiles')
 

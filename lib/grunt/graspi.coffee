@@ -122,15 +122,15 @@ module.exports = (grunt) ->
   # ----------------------------------------------------------------
 
   customTasks = []
-  config.eachEmc null, null, (emc) ->
+  grunt.graspi.config.eachEmc null, null, (emc) ->
     customTasks = customTasks.concat(Object.keys(emc.emc.tasks || {}))
   customTasks = _.uniq(customTasks)
   customTasks = _.filter customTasks, (task_name) =>
     !_.includes(['build', 'graspi_build'], task_name)
 
-  _.each customTasks, (task_name) ->
-    grunt.registerTask task_name, (env_name, mod_name) ->
-      taskRunner.runDynamicGraspiTask env_name, mod_name, task_name, true
+  _.each customTasks, (task_name) =>
+    grunt.registerTask task_name, (env_name, mod_name) =>
+      grunt.graspi.taskRunner.runDynamicGraspiTask env_name, mod_name, task_name, true
 
   # ----------------------------------------------------------------
   # return config
