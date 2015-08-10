@@ -38,8 +38,7 @@ module.exports = class TaskHelper extends require('./abstract')
         return unless _.isObject(dep_emc.emc.options.templates)
         return unless _.isString(dep_emc.emc.options.templates.destFile)
 
-        destPath = dep_emc.emc.options.templates.destPath
-        destPath or= dep_emc.emc.options.destPath
+        destPath = @getDestPath(dep_emc)
         destFile = File.join(destPath, dep_emc.emc.options.templates.destFile)
         return unless @grunt.file.exists(destFile)
 

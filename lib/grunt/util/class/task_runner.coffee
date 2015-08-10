@@ -106,5 +106,15 @@ module.exports = class TaskRunner
     unless _.isBoolean(options.cached)
       options.cached or= @grunt.option "#{mod_name}_cached"
 
+    @grunt.option "#{mod_name}_env_name",       options.env_name
+    @grunt.option "#{mod_name}_mod_name",       options.mod_name
+    @grunt.option "#{mod_name}_task_name",      options.task_name
+    @grunt.option "#{mod_name}_main_task_name", options.main_task_name
+    @grunt.option "#{mod_name}_resolveDeps",    options.resolveDeps
+    @grunt.option "#{mod_name}_depsTask",       options.depsTask
+    @grunt.option "#{mod_name}_depsCaching",    options.depsCaching
+    @grunt.option "#{mod_name}_cached",         options.cached
+    @grunt.option "#{mod_name}_emc",            options.emc
+
     options
 

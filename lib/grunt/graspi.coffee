@@ -96,7 +96,7 @@ module.exports = (grunt) ->
       mod_name:       grunt.option('mod_name')
       task_name:      grunt.option('task_name')
       main_task_name: grunt.option('task_name')
-      resolveDeps:    grunt.option('resolveDeps')
+      resolveDeps:    if grunt.option('resolveDeps') == false then false else true
       depsCaching:    grunt.option('cachedDeps')
       depsTask:       grunt.option('depsTask') || grunt.option('task_name')
 

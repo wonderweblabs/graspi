@@ -15,11 +15,13 @@ module Graspi
     end
 
     def resolve_path(file)
-      File.join '/', @config[File.join(@mod_name, file).to_s]
+      mappedPath = @config[File.join(@mod_name, file).to_s]
+
+      mappedPath ? File.join('/', mappedPath) : nil
     end
 
     def resolve_absolute_path(file)
-      path = resolve_path(file)
+      path = resolve_path(file) || ''
 
       File.join(::Rails.root, 'public', path)
     end

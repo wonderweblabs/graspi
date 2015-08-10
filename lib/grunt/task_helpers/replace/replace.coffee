@@ -57,18 +57,42 @@ module.exports = class TaskHelper extends require('./abstract')
     cfg
 
   getFiles: (replaceConfig) ->
-    replaceConfig.files
+    return @_files if _.isArray(@_files)
+
+    @_files = _.map (replaceConfig.files || []), (file) => @replacePlaceholders(file)
+
+  replacePlaceholders: (str = '') ->
+    results = _.uniq(str.match(/\%\%[a-zA-Z0-9]*\%\%/g) || [])
+    mapping = @getPlaceholderMapping()
+
+    _.each results, (result) =>
+      repl = mapping[result.replace(/\%/g, '')]
+      return unless _.isString(repl)
+
+      str = str.replace(new RegExp(result, 'g'), repl)
+
+    str
+
+  getPlaceholderMapping: ->
+    envName:      @getEnvName()
+    modName:      @getModName()
+    taskName:     @getTaskName()
+    destBasePath: @getDestBasePath()
+    destPath:     @getDestPath()
+    destFolder:   @getDestFolder()
+    tmpPath:      @getTmpPath()
+    basePath:     @getBasePath()
 
   getPatternReplace: (replaceConfig) ->
     if _.isString(replaceConfig.replace)
-      return replaceConfig.replace
+      return @replacePlaceholders(replaceConfig.replace)
 
     else if _.isArray(replaceConfig.replace)
       entries = _.map replaceConfig.replace, (replaceEntry) =>
         if _.isObject(replaceEntry) && _.isString(replaceEntry.file)
-          @grunt.file.read(replaceEntry.file)
+          @grunt.file.read(@replacePlaceholders(replaceEntry.file))
         else
-          replaceEntry
+          @replacePlaceholders(replaceEntry)
 
       return entries.join('\n')
 
@@ -80,6 +104,8 @@ module.exports = class TaskHelper extends require('./abstract')
       append = '\n\r' if append == 'NEWLINE'
 
       func = (match) ->
+        match = @replacePlaceholders(match || '')
+
         "#{prepend}#{match}#{append}"
 
       return func

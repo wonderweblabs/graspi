@@ -52,7 +52,10 @@ module.exports = class Dependencies
 
     @_resolveDependencies(options, [])
 
-    _.map @_modules, (mod_name) => _.clone(@_moduleOptions[mod_name])
+    _.map @_modules, (mod_name) =>
+      module = _.clone(@_moduleOptions[mod_name])
+      module.resolveDeps = false
+      module
 
   #
   # Options:
@@ -67,6 +70,7 @@ module.exports = class Dependencies
   # Returns ordered list of emc objects.
   #
   buildDependenciesEmcList: (options) ->
+    options = _.merge options, { resolveDeps: true, cached: false, depsCaching: false }
     runList = @buildExecutionList(options)
 
     _.map runList, (moduleOptions) -> moduleOptions.emc
@@ -114,13 +118,13 @@ module.exports = class Dependencies
 
     # check dependencies
     unless _.includes(modsChecked, mod_name)
+      modsChecked.push mod_name
 
       # get and ensure emc
       unless _.isObject(emc.emc)
         @grunt.fail.fatal("Graspi: Could not resolve dependency - #{mod_name}")
 
       # resolve dependencies
-
       unless @_moduleOptions[mod_name].resolveDeps == false
         _.each (emc.emc.dependencies || []), (dep_mod_name) =>
           @_resolveDependencies({

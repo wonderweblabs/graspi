@@ -34,7 +34,12 @@ module.exports = class GraspiConfigBuilder
 
     configs     = []
     finalConfig = {
-      options: @_options
+      options:
+        gruntRoot:            @grunt.option('root')
+        configCache:          @getConfigCacheFile()
+        configLoadPaths:      @getConfigLoadPaths()
+        tasksLoadPaths:       @grunt.option('tasksLoadPaths')
+        taskHelperLoadPaths:  @grunt.option('taskHelperLoadPaths')
     }
 
     _.each @getConfigLoadPaths(), (configLoadPath) =>

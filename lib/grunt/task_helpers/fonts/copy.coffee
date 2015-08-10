@@ -49,7 +49,7 @@ module.exports = class TaskHelper extends require('./abstract')
       cfg.files.push
         expand: true
         src: srcList
-        cwd: emc.emc.options.destPath
+        cwd: @getDestPath(emc)
         dest: File.join(@getDestPath(), emc.mod_name)
         filter: (file) => @fileCacheUpdateIfChanged(file)
 

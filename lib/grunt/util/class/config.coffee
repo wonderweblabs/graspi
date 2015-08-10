@@ -53,7 +53,21 @@ module.exports = class GraspiConfig
     @_fileCacheTrackers[emc.emc.cacheFile] or= @_buildFileCacheTracker(emc)
 
   getDestPath: (emc) ->
-    File.join(@_getDestBasePath(emc), @_getDestFolder(emc))
+    File.join(@getDestBasePath(emc), @getDestFolder(emc))
+
+  getDestBasePath: (emc) ->
+    emc = emc.emc || {}
+
+    path = emc.options.destPath if _.isObject(emc.options)
+
+    path || emc.destPath
+
+  getDestFolder: (emc) ->
+    emc = emc.emc || {}
+
+    folder = emc.options.destFolder if _.isObject(emc.options)
+
+    folder || emc.destFolder
 
   getEmc: (env_name, mod_name) ->
     env = @getEnvironments()[env_name]
@@ -135,21 +149,6 @@ module.exports = class GraspiConfig
   _buildFileCacheTracker: (emc) ->
     FCT(@grunt, emc.emc.cacheFile)
 
-  # @nodoc
-  _getDestBasePath: (emc) ->
-    emc = emc.emc || {}
-
-    path = emc.options.destPath if _.isObject(emc.options)
-
-    path || emc.destPath
-
-  # @nodoc
-  _getDestFolder: (emc) ->
-    emc = emc.emc || {}
-
-    folder = emc.options.destFolder if _.isObject(emc.options)
-
-    folder || emc.destFolder
 
 
 

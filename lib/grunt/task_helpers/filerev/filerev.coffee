@@ -45,7 +45,7 @@ module.exports = class TaskHelper extends require('./abstract')
   # -----
 
   collectFilesInBasePaths: ->
-    @grunt.file.expand(File.join(@getAppConfig().destPath, '**/*'))
+    @grunt.file.expand(File.join(@getDestPath(), '**/*'))
 
   filterRevisionedFiles: (files) ->
     _.filter files, (path) =>

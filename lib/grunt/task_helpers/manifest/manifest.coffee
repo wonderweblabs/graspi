@@ -48,7 +48,7 @@ module.exports = class TaskHelper extends require('./abstract')
 
   parseMapping: (mapping) ->
     _.inject mapping, {}, (memo, resultPath, path) =>
-      pathNew = path.replace(@getAppConfig().destPath, '')
+      pathNew = path.replace(@getDestPath(), '')
       pathNew = File.join(@getModName(), pathNew)
 
       return memo if _.isEmpty(pathNew)

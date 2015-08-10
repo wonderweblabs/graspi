@@ -117,6 +117,14 @@ module.exports = class AbstractTaskHelper
   getDestPath: (emc = null) ->
     @grunt.graspi.config.getDestPath(emc || @getEmc())
 
+  # Module destination base path
+  getDestBasePath: (emc = null) ->
+    @grunt.graspi.config.getDestBasePath(emc || @getEmc())
+
+  # Module destination folder
+  getDestFolder: (emc = null) ->
+    @grunt.graspi.config.getDestFolder(emc || @getEmc())
+
   # Module base src files path
   getBasePath: ->
     @getAppConfig().basePath

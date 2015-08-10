@@ -28,13 +28,13 @@ module.exports = class TaskHelper extends require('./abstract')
     return [] unless @includeDependencies()
 
     depList = @getDependencies().buildDependenciesEmcList(@options)
+
     files = _.inject depList, [], (memo, emc) =>
       return memo if emc.env_name == @getEnvName() && emc.mod_name == @getModName()
       return memo unless _.isObject(emc.emc.options.templates)
       return memo unless _.isString(emc.emc.options.templates.destFile)
 
-      destPath = emc.emc.options.templates.destPath
-      destPath or= emc.emc.options.destPath
+      destPath = @getDestPath(emc)
       destFile = File.join(destPath, emc.emc.options.templates.destFile)
       return memo unless @grunt.file.exists(destFile)
 
