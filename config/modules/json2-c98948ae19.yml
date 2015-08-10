@@ -7,7 +7,7 @@ tasks:
 
 options:
   basePath: 'bower_components/json2'
-  destPath: 'tmp/graspi/build/json2'
+  destFolder: 'json2'
   js:
     destFile: 'json2.js'
     files:

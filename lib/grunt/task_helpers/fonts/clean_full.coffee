@@ -13,7 +13,7 @@ module.exports = class TaskHelper extends require('./abstract')
 
   getFiles: ->
     _.map @getConfig().fonts.copy.formats, (format) =>
-      File.join(@getAppConfig().destPath, "**/*.#{format}")
+      File.join(@getDestPath(), "**/*.#{format}")
 
   buildConfig: ->
     { src: @getFiles() }

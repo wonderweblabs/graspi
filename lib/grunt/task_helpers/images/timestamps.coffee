@@ -7,5 +7,5 @@ module.exports = class TaskHelper extends require('./abstract')
     formats = (@getConfig().images.copy.formats || [])
 
     _.each formats, (format) =>
-      _.each @g.file.expand(File.join(@getDestPath(), "**/*.#{format}")), (path) =>
+      _.each @grunt.file.expand(File.join(@getDestPath(), "**/*.#{format}")), (path) =>
         @fileCacheUpdate(path)

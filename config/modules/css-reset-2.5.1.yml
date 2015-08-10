@@ -7,7 +7,7 @@ tasks:
 
 options:
   basePath: 'bower_components/css-reset'
-  destPath: 'tmp/graspi/build/css-reset'
+  destFolder: 'css-reset'
   css:
     destFile: 'reset.css'
     files:

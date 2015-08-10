@@ -34,7 +34,7 @@ module.exports = class TaskHelper extends require('./abstract')
     _.inject @getFiles(), [], (memo, file) =>
       file = File.join(@getBasePath(), file)
 
-      return memo.concat(@g.file.expand({ filter: 'isFile' }, file)) unless @g.file.isFile(file)
+      return memo.concat(@grunt.file.expand({ filter: 'isFile' }, file)) unless @g.file.isFile(file)
 
       memo.push file
       memo

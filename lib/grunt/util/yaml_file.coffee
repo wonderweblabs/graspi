@@ -1,9 +1,9 @@
-_         = require './lodash_extensions'
+_         = require('lodash')
 YamlFile  = require './class/yaml_file'
 
 obj = null
 
 module.exports = (grunt) ->
-  obj = new YamlFile(_, grunt) unless _.isObject(obj)
+  obj = new YamlFile(grunt) unless _.isObject(obj)
 
   return obj

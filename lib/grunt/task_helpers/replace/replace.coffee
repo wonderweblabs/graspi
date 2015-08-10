@@ -30,8 +30,8 @@ module.exports = class TaskHelper extends require('./abstract')
       target = "#{@getGruntTaskTarget()}-#{replaceConfig.cid}"
       target = target.replace(/(\.|\:)/g, '-')
 
-      @g.config.set("#{@getGruntTask()}.#{target}", @buildConfig(replaceConfig))
-      @g.task.run "#{@getGruntTask()}:#{target}"
+      @grunt.config.set("#{@getGruntTask()}.#{target}", @buildConfig(replaceConfig))
+      @grunt.task.run "#{@getGruntTask()}:#{target}"
 
   buildConfig: (replaceConfig) ->
     config = _.inject @getConfig().replace.replace.options, {}, (memo, value, key) =>
@@ -66,7 +66,7 @@ module.exports = class TaskHelper extends require('./abstract')
     else if _.isArray(replaceConfig.replace)
       entries = _.map replaceConfig.replace, (replaceEntry) =>
         if _.isObject(replaceEntry) && _.isString(replaceEntry.file)
-          @g.file.read(replaceEntry.file)
+          @grunt.file.read(replaceEntry.file)
         else
           replaceEntry
 

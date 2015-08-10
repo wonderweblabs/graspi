@@ -1,12 +1,24 @@
-module.exports = (grunt, config, options) ->
+module.exports = (grunt) ->
 
-  taskRunner  = require('../util/task_runner')(grunt, config, options)
+  taskRunner = grunt.graspi.taskRunner
 
   grunt.registerTask 'graspi_images', (env_name, mod_name) ->
-    taskRunner.runGraspiTask env_name, mod_name, 'graspi_images_copy'
-    taskRunner.runGraspiTask env_name, mod_name, 'graspi_images_imagemin'
-    taskRunner.runGraspiTask env_name, mod_name, 'graspi_images_svgmin'
-    taskRunner.runGraspiTask env_name, mod_name, 'graspi_images_update_timestamps'
+    taskRunner.runGraspiTask
+      env_name: env_name
+      mod_name: mod_name
+      task_name: 'graspi_images_copy'
+    taskRunner.runGraspiTask
+      env_name: env_name
+      mod_name: mod_name
+      task_name: 'graspi_images_imagemin'
+    taskRunner.runGraspiTask
+      env_name: env_name
+      mod_name: mod_name
+      task_name: 'graspi_images_svgmin'
+    taskRunner.runGraspiTask
+      env_name: env_name
+      mod_name: mod_name
+      task_name: 'graspi_images_update_timestamps'
 
   grunt.registerTask 'graspi_images_copy', (env_name, mod_name) ->
     taskRunner.runGraspiTaskHelper env_name, mod_name, 'images/copy'
@@ -24,5 +36,8 @@ module.exports = (grunt, config, options) ->
     taskRunner.runGraspiTaskHelper env_name, mod_name, 'images/clean'
 
   grunt.registerTask 'graspi_images_clean_full', (env_name, mod_name) ->
-    taskRunner.runGraspiTask env_name, mod_name, 'graspi_images_clean'
+    taskRunner.runGraspiTask
+      env_name: env_name
+      mod_name: mod_name
+      task_name: 'graspi_images_clean'
     taskRunner.runGraspiTaskHelper env_name, mod_name, 'images/clean_full'

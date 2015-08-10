@@ -21,9 +21,9 @@ module.exports = class TaskHelper extends require('./abstract')
       return false if memo == false
 
       file = File.join(@getBasePath(), file)
-      return !@fileCacheHasChanged(file) if @g.file.isFile(file)
+      return !@fileCacheHasChanged(file) if @grunt.file.isFile(file)
 
-      _.inject @g.file.expand(file), true, (subMemo, subFile) =>
+      _.inject @grunt.file.expand(file), true, (subMemo, subFile) =>
         if subMemo == false then false else !@fileCacheHasChanged(subFile)
 
   # ------------------------------------------------------------
@@ -43,7 +43,7 @@ module.exports = class TaskHelper extends require('./abstract')
 
     coffeeFiles = _.inject @getCoffeeFiles(), [], (memo, filesEntry) =>
       filesEntry = File.join(@getBasePath(), filesEntry)
-      filesEntry = @g.file.expand(filesEntry) if !@g.file.isFile(filesEntry)
+      filesEntry = @grunt.file.expand(filesEntry) if !@grunt.file.isFile(filesEntry)
       filesEntry = [filesEntry] unless _.isArray(filesEntry)
 
       memo.concat(filesEntry)

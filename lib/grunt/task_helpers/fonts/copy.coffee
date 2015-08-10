@@ -30,12 +30,12 @@ module.exports = class TaskHelper extends require('./abstract')
 
     files = []
     files = files.concat(@_appendForDependencies(files))
-    files = files.concat(@_filesForEmc(@emc, @getBasePath()))
+    files = files.concat(@_filesForEmc(@getEmc(), @getBasePath()))
 
     @_fontFilesFull = _.uniq(files)
 
   getDependencies: ->
-    @_deps or= new Deps(_, @g, @emc.config)
+    @_deps or= new Deps(@grunt)
 
   buildConfig: ->
     cfg                        = {}
@@ -72,7 +72,7 @@ module.exports = class TaskHelper extends require('./abstract')
   _iterateDependencies: (eachFunc) ->
     return unless @includeDependencies()
 
-    _.each @getDependencies().buildDependenciesEmCList(@getEnvName(), @getModName()), (emc) =>
+    _.each @getDependencies().buildDependenciesEmcList(@options), (emc) =>
       return if emc.env_name == @getEnvName() && emc.mod_name == @getModName()
 
       eachFunc(emc)
@@ -88,7 +88,7 @@ module.exports = class TaskHelper extends require('./abstract')
   _filesForEmc: (emc, path) ->
     formats = emc.emc.fonts.copy.formats || []
 
-    result = _.map formats, (format) => @g.file.expand(File.join(path, "**/*.#{format}"))
+    result = _.map formats, (format) => @grunt.file.expand(File.join(path, "**/*.#{format}"))
     result or= []
 
     _.uniq(_.flatten(result))

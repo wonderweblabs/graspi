@@ -1,0 +1,167 @@
+#!/usr/bin/env node
+
+'use strict';
+
+process.title = 'graspi';
+
+var _           = require('lodash');
+var path        = require('path');
+var basedir     = process.cwd()
+var argv        = process.argv
+var userArgs    = argv.slice(2);
+var cols        = process.stdout.columns;
+
+// ----------------------------------------------------------------
+// help
+// ----------------------------------------------------------------
+var printHelp = function() {
+  console.log('');
+  console.log('Graspi - grunt asset pipeline');
+  console.log('-----------------------------');
+  console.log('See grunt help for more options. All parameter are passed through to grunt.');
+  console.log('');
+  console.log('');
+  console.log('You can set all options inside of the gruntfile with grunt.option([name..], [value..])');
+  console.log('');
+  console.log('Options:');
+  console.log('');
+
+
+  var flags = {
+    '--env=[env name]'                      : 'The name of the environment, e.g. \n' +
+                                               '--env=production\n' +
+                                               ' \n' +
+                                               'Default: --env=development',
+
+    '--module=[mod name]'                   : 'The name of the module to run, e.g. \n' +
+                                              '--module=cmi\n' +
+                                               ' \n' +
+                                               'Default: null and will raise an error if ' +
+                                               'it stays null.',
+
+    '--task=[task name]'                    : 'The name of the task to run, e.g. \n' +
+                                              '--task=clean\n' +
+                                               ' \n' +
+                                               'Default: --task=build',
+
+    '--root=[root path]'                    : 'Working directory of graspiy. It is the ' +
+                                              'path of graspi npm module by default.',
+
+    '--configCache=[cfg cache file]'        : 'Graspi stores the merged configuration ' +
+                                              'inside a large json file. You can control ' +
+                                              'the location of that file with this parameter.',
+
+    '--cached=[true/false]'                 : 'Completly turn on/off task caching. This ' +
+                                              'flag is especially for developing purposes ' +
+                                              'since you can control the caching behavior ' +
+                                              'with the config files.' +
+                                              ' \n' +
+                                              ' \n' +
+                                              'Default: --cached=null',
+
+    '--cachedDeps=[true/false]'             : 'Completly turn on/off task caching of the ' +
+                                              'dependencies of the current task. Same behavior ' +
+                                              'like with the cached flag.' +
+                                              ' \n' +
+                                              ' \n' +
+                                              'Default: --cachedDeps=null',
+
+    '--resolveDeps=[true/false]'            : 'Control dependencies should be resolved. ' +
+                                              ' \n' +
+                                              ' \n' +
+                                              'Default: --resolveDeps=true',
+
+    '--includeDeps=[true/false]'            : 'Control if to include the dependency files ' +
+                                              'into the destination file of the current ' +
+                                              'task. Same behavior like with cached.' +
+                                              ' \n' +
+                                              ' \n' +
+                                              'Default: --includeDeps=null',
+
+    '--depsTask=[null/String]'              : 'The task to run the dependencies with. This might' +
+                                              'be helpful for running e.g. you task for css but ' +
+                                              'building dependencies completly. By default, the ' +
+                                              'task runner will execute the same task like the one' +
+                                              'you execute.' +
+                                              ' \n' +
+                                              ' \n' +
+                                              'Default: --depsTask=null',
+
+    '--configLoadPaths=[array of paths]'    : 'Array of pathes that will be searched for config ' +
+                                              'files. The order decides which overwrite wins. ' +
+                                              'Last entry will win the merge.',
+
+    '--tasksLoadPaths=[array of paths]'     : 'Array of pathes that will be required. This is ' +
+                                              'useful to load custom tasks.',
+
+    '--taskHelperLoadPaths=[array of paths]': 'Array of pathes that will be searched for the ' +
+                                              'loading of the task helpers. Last entry will win ' +
+                                              'if there is a naming collision.',
+  }
+
+  var longest = 0;
+
+  _.each(flags, function(desc, flag){ longest = Math.max(longest, flag.length) });
+
+  var dist = longest + 3;
+  var size = cols - dist;
+  var offset = _.repeat(' ', dist - 1);
+
+  _.each(flags, function(desc, flag){
+    // flag
+    flag = _.repeat(' ', longest - flag.length) + flag
+
+    // desc
+    desc = desc.split(/\n/);
+    desc = _.map(desc, function(d) {
+      return _.chunk(d || '', size) || [];
+    });
+    desc = _.flatten(desc);
+
+    if(_.isEmpty(desc[0])){
+      desc[0] = [];
+    };
+
+    // print
+    console.log(flag, '-', _.trim(desc[0].join('')));
+
+    _.each(desc, function(arr, index){
+      if(index == 0) {
+      } else {
+        console.log(offset, _.trim(arr.join('')));
+      }
+    });
+
+    console.log('');
+  });
+
+};
+
+// ----------------------------------------------------------------
+// run switch
+// ----------------------------------------------------------------
+if(_.any(argv, function(arg){ return arg == '--help'; })) {
+  printHelp()
+} else {
+  var exec  = require('child_process').exec;
+  var spawn = require('child_process').spawn;
+
+  var args = ['graspi'].concat(userArgs)
+  var g = spawn('grunt', args, { cwd: basedir });
+
+  g.stdout.on('data', function (data) {
+    var msg = data.toString();
+
+    process.stdout.write(msg)
+  });
+
+  g.stderr.on('data', function (data) {
+    var msg = 'ERROR: ' + data.toString();
+    console.log(msg.red);
+  });
+
+  g.on('exit', function (code) {
+    console.log('child process exited with code ' + code.toString());
+  });
+
+};

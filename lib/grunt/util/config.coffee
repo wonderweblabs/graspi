@@ -1,5 +1,3 @@
-_                   = require './lodash_extensions'
-File                = require 'path'
 GraspiConfigBuilder = require './class/config_builder'
 
 config = null
@@ -7,9 +5,9 @@ config = null
 # ----------------------------------------------------------------
 # export
 # ----------------------------------------------------------------
-module.exports = (grunt, options) ->
+module.exports = (grunt) ->
   if config == null
-    builder = new GraspiConfigBuilder(_, File, grunt, options)
+    builder = new GraspiConfigBuilder(grunt)
     config = builder.configure()
 
   return config

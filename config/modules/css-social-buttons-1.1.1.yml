@@ -8,7 +8,7 @@ tasks:
 
 options:
   basePath: 'bower_components/css-social-buttons/css'
-  destPath: 'tmp/graspi/build/css-social-buttons'
+  destFolder: 'css-social-buttons'
   css:
     destFile: 'zocial.css'
     files:

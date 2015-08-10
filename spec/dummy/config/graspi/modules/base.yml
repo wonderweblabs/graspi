@@ -1,5 +1,5 @@
 dependencies:
-  - cached:jquery-2.1.4
+  - jquery-2.1.4
   - cached:json2-c98948ae19
   - cached:backbone.babysitter-0.1.8
   - cached:backbone.wreqr-1.3.3
@@ -7,10 +7,6 @@ dependencies:
   - cached:requirejs-2.1.19
   - cached:css-reset-2.5.1
   - cached:css-social-buttons-1.1.1
-  - cmi-checkbox
-  - paper-button-1.0.3
-  - paper-fab-1.0.3
-  - paper-input-1.0.8
 
 css:
   concat:

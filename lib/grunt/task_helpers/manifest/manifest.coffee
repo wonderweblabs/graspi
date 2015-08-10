@@ -7,7 +7,7 @@ module.exports = class TaskHelper extends require('./abstract')
   cached: -> @getConfig().postpipeline.manifest.cached == true
 
   isCacheValid: ->
-    @g.file.exists(@getManifestFile()) &&
+    @grunt.file.exists(@getManifestFile()) &&
     !@fileCacheHasChanged(@getMappingFile())
 
   # ------------------------------------------------------------

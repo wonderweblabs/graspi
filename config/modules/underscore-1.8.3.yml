@@ -7,7 +7,7 @@ tasks:
 
 options:
   basePath: 'bower_components/underscore'
-  destPath: 'tmp/graspi/build/underscore'
+  destFolder: 'underscore'
   js:
     destFile: 'underscore.js'
     files:

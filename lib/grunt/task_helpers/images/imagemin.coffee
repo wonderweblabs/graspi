@@ -27,7 +27,7 @@ module.exports = class TaskHelper extends require('./abstract')
 
     _.each @getConfig().images.imagemin.formats.images, (format) =>
       path = File.join(@getDestPath(), "**/*.#{format}")
-      files = @g.file.expand(path)
+      files = @grunt.file.expand(path)
 
       @_imageFiles = @_imageFiles.concat(files) if _.isArray(files)
 

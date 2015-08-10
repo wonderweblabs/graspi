@@ -45,7 +45,7 @@ module.exports = class TaskHelper extends require('./abstract')
   # -----
 
   collectFilesInBasePaths: ->
-    @g.file.expand(File.join(@getAppConfig().destPath, '**/*'))
+    @grunt.file.expand(File.join(@getAppConfig().destPath, '**/*'))
 
   filterRevisionedFiles: (files) ->
     _.filter files, (path) =>
@@ -59,13 +59,13 @@ module.exports = class TaskHelper extends require('./abstract')
 
     _.each files, (path) =>
       f = @getMapping()[path]
-      @g.file.delete(f) if f && f != path && @g.file.exists(f)
+      @grunt.file.delete(f) if f && f != path && @grunt.file.exists(f)
 
   createRevisionFiles: (files) ->
     _.each files, (path) =>
       if @withDigest() == true
         newPath = @_digestPath(path)
-        @g.file.copy(path, newPath)
+        @grunt.file.copy(path, newPath)
       else
         newPath = path
 
@@ -76,10 +76,10 @@ module.exports = class TaskHelper extends require('./abstract')
       sourceMapPath   = "#{path}.map"
       resultFilePath  = @getMapping()[path]
 
-      return unless @g.file.exists(resultFilePath)
-      return unless @g.file.exists(sourceMapPath)
+      return unless @grunt.file.exists(resultFilePath)
+      return unless @grunt.file.exists(sourceMapPath)
 
-      fileContents  = @g.file.read(resultFilePath, {encoding: 'utf8'})
+      fileContents  = @grunt.file.read(resultFilePath, {encoding: 'utf8'})
       matches       = Convert.mapFileCommentRegex.exec(fileContents)
 
       return unless matches
@@ -87,7 +87,7 @@ module.exports = class TaskHelper extends require('./abstract')
       sourceMapFile = matches[1] || matches[2]
       newSrcMap     = fileContents.replace sourceMapFile, File.basename(sourceMapPath)
 
-      @g.file.write resultFilePath, newSrcMap, {encoding: 'utf8'}
+      @grunt.file.write resultFilePath, newSrcMap, {encoding: 'utf8'}
 
 
   updateFileChangeTimestamps: (files) ->
@@ -99,10 +99,10 @@ module.exports = class TaskHelper extends require('./abstract')
 
   # @nodoc
   _readMappingFile: ->
-    return {} unless @g.file.exists(@getMappingFile())
+    return {} unless @grunt.file.exists(@getMappingFile())
 
     try
-      @_mapping = @g.file.readJSON(@getMappingFile())
+      @_mapping = @grunt.file.readJSON(@getMappingFile())
     catch e
       @_mapping = {}
 
@@ -114,7 +114,7 @@ module.exports = class TaskHelper extends require('./abstract')
     spaces = if @getMappingFilePrettyPrint() == true then 4 else 0
     mapping = JSON.stringify(@_mapping, null, spaces)
 
-    @g.file.write @getMappingFile(), mapping, { encoding: 'utf-8' }
+    @grunt.file.write @getMappingFile(), mapping, { encoding: 'utf-8' }
 
   # @nodoc
   _digestPath: (path) ->

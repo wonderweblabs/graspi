@@ -1,126 +1,110 @@
 _                     = require 'lodash'
+File                  = require 'path'
 DependencyListBuilder = require('./task_runner/dependencies')
 Runner                = require('./task_runner/runner')
 
 module.exports = class TaskRunner
 
-  constructor: (lodash, File, grunt, config, options) ->
-    @_        = lodash
-    @g        = grunt
-    @File     = File
-    @config   = config
-    @options  = options
+  constructor: (@grunt) ->
+
+  getConfig: ->
+    @grunt.graspi.config
 
   getEmc: (env_name, mod_name) ->
-    @config.getEmc(env_name, mod_name)
-
-  getDefaultEnvName: ->
-    @config.getDefaultEnvironment()
+    @getConfig().getEmc(env_name, mod_name)
 
   getModuleNames: ->
-    @config.getModuleNames()
+    @getConfig().getModuleNames()
 
   getEnvironmentNames: ->
-    @config.getEnvironmentNames()
+    @getConfig().getEnvironmentNames()
 
   getDependencyListBuilder: ->
-    @_depListBuilder or= new DependencyListBuilder(@_, @g, @config)
+    new DependencyListBuilder(@grunt)
 
   getRunner: ->
-    @_runner or= new Runner(@_, @g, @config, @)
-
+    @_runner or= new Runner(@grunt, @)
 
   #
-  # run graspi task
+  # Options:
+  # * env_name (req)
+  # * mod_name (req)
+  # * task_name
+  # * main_task_name
+  # * resolveDeps [null/true/false]
+  # * depsTask
+  # * depsCaching [null/true/false]
   #
+  runGraspiTask: (options = {}) ->
+    unless _.isString(options.env_name)
+      @grunt.fail.fatal('options.env_name missing.')
 
-  runGraspiTask: (env_name, mod_name, task_name = null, dependencyResolving = false, defaultTaskName = null, caching = true) ->
-    if dependencyResolving == true
-      @runGraspiTaskWithDeps(env_name, mod_name, task_name, defaultTaskName, caching)
+    unless _.isString(options.mod_name)
+      @grunt.fail.fatal('options.mod_name missing.')
+
+    unless _.isString(options.task_name)
+      @grunt.fail.fatal('options.task_name missing.')
+
+    @_appendOptions(options)
+
+    if _.isEmpty(options.main_task_name)
+      options.main_task_name = options.task_name
+
+    if options.resolveDeps == true
+      runList = @getDependencyListBuilder().buildExecutionList(options)
+
+      @getRunner().runTasks(runList)
     else
-      @runGraspiTaskWithoutDeps(env_name, mod_name, task_name)
-
-  runGraspiTaskWithDeps: (env_name, mod_name, task_name = null, defaultTaskName = null, caching = true) ->
-    [env_name, mod_name, task_name] = @_normalizeTaskParams(env_name, mod_name, task_name)
-
-    runList = @getDependencyListBuilder().buildExecutionList(env_name, mod_name, task_name, defaultTaskName, caching)
-    @getRunner().runTasks(runList)
-
-  runGraspiTaskWithoutDeps: (env_name, mod_name, task_name = null) ->
-    [env_name, mod_name, task_name] = @_normalizeTaskParams(env_name, mod_name, task_name)
-
-    @getRunner().runGruntTask(env_name, mod_name, task_name)
-
-
-  #
-  # run dynamic graspi task
-  #
-
-  runDynamicGraspiTask: (env_name, mod_name, task_name = null, dependencyResolving = false, defaultTaskName = null, caching = true) ->
-    if dependencyResolving == true
-      @runDynamicGraspiTaskWithDeps(env_name, mod_name, task_name, defaultTaskName, caching)
-    else
-      @runDynamicGraspiTaskWithoutDeps(env_name, mod_name, task_name)
-
-  runDynamicGraspiTaskWithDeps: (env_name, mod_name, task_name = null, defaultTaskName = null, caching = true) ->
-    [env_name, mod_name, task_name] = @_normalizeTaskParams(env_name, mod_name, task_name)
-
-    runList = @getDependencyListBuilder().buildExecutionList(env_name, mod_name, task_name, defaultTaskName, caching)
-
-    runList = _.filter runList, (runListEntry) ->
-      runListEntry.env_name != env_name &&
-      runListEntry.mod_name != mod_name &&
-      runListEntry.task_name != task_name
-
-    @getRunner().runTasks(runList)
-    @getRunner().runDynamicTask(env_name, mod_name, task_name)
-
-  runDynamicGraspiTaskWithoutDeps: (env_name, mod_name, task_name = null) ->
-    [env_name, mod_name, task_name] = @_normalizeTaskParams(env_name, mod_name, task_name)
-
-    @getRunner().runDynamicTask(env_name, mod_name, task_name)
+      @getRunner().runGruntTask(options)
 
 
   #
   # run task helper
   #
 
-  runGraspiTaskHelper: (environment, module, helperPath) ->
+  runGraspiTaskHelper: (env_name, mod_name, helperPath) ->
     helperPath = @_resolveHelperPath(helperPath)
 
-    taskHelper = new (require(helperPath))(@g, @getEmc(environment, module), @)
+    options = @_appendOptions({ env_name: env_name, mod_name: mod_name })
+
+    taskHelper = new (require(helperPath))(@grunt, options)
     taskHelper.run()
 
   # ----------------------------------------------------------
   # private
 
   # @nodoc
-  _normalizeTaskParams: (env_name, mod_name, task_name = null) ->
-    if !@_.isString(env_name) || !@_.isString(mod_name)
-      @g.fail.fatal('Graspi needs at least a module and a task to run.')
-
-    if !@_.isString(task_name) || task_name.length <= 0
-      task_name = mod_name
-      mod_name  = env_name
-      env_name  = @getDefaultEnvName()
-
-    if !@_.includes(@getEnvironmentNames(), env_name)
-      @g.fail.fatal("Graspi: unknown environment - #{env_name}")
-
-    if !@_.includes(@getModuleNames(), mod_name)
-      @g.fail.fatal("Graspi: unknown module - #{mod_name}")
-
-    [env_name, mod_name, task_name]
-
-  # @nodoc
   _resolveHelperPath: (helperPath) ->
-    loadPaths = (@options.tasksLoadPaths || [])
+    loadPaths = (@grunt.option('taskHelperLoadPaths') || [])
 
-    @_.inject loadPaths, null, (memo, loadPath) =>
-      if memo == null && @g.file.exists(@File.join(loadPath, "#{helperPath}.coffee"))
-        memo = @File.join(loadPath, helperPath)
-      else if memo == null && @g.file.exists(@File.join(loadPath, "#{helperPath}.js"))
-        memo = @File.join(loadPath, helperPath)
+    _.inject loadPaths, null, (memo, loadPath) =>
+      if memo == null && @grunt.file.exists(File.join(loadPath, "#{helperPath}.coffee"))
+        memo = File.join(loadPath, helperPath)
+      else if memo == null && @grunt.file.exists(File.join(loadPath, "#{helperPath}.js"))
+        memo = File.join(loadPath, helperPath)
 
       memo
+
+  # @nodoc
+  _appendOptions: (options) ->
+    mod_name = options.mod_name
+
+    options.env_name or=        @grunt.option "#{mod_name}_env_name"
+    options.mod_name or=        @grunt.option "#{mod_name}_mod_name"
+    options.task_name or=       @grunt.option "#{mod_name}_task_name"
+    options.main_task_name or=  @grunt.option "#{mod_name}_main_task_name"
+    options.depsTask or=        @grunt.option "#{mod_name}_depsTask"
+    options.emc or=             @grunt.option "#{mod_name}_emc"
+    options.emc or=             @getEmc(options.env_name, options.mod_name)
+
+    unless _.isBoolean(options.resolveDeps)
+      options.resolveDeps = @grunt.option "#{mod_name}_resolveDeps"
+
+    unless _.isBoolean(options.depsCaching)
+      options.depsCaching or= @grunt.option "#{mod_name}_depsCaching"
+
+    unless _.isBoolean(options.cached)
+      options.cached or= @grunt.option "#{mod_name}_cached"
+
+    options
 

@@ -1,3 +1,6 @@
+Fs  = require 'fs'
+_   = require 'lodash'
+
 #
 # Cache entries are based on a scope (key in root json object).
 #
@@ -26,17 +29,21 @@ module.exports = class FileChangeTracker
   #
   # Init.
   #
-  constructor: (lodash, fs, path, JsonFile, FileChecksum, grunt, cacheFile, defaultScope = null) ->
-    @g              = grunt
-    @_              = lodash
-    @fs             = fs
-    @path           = path
-    @JsonFile       = JsonFile
-    @FileChecksum   = FileChecksum
-    @_cacheFile     = cacheFile
-    @_defaultScope  = defaultScope || 'file_change_tracker'
+  constructor: (@JsonFile, @FileChecksum, @grunt, @cacheFile) ->
+    @_defaultScope  = 'file_change_tracker'
+    @_mapping       = @_loadMapping()
 
-    @reloadMapping()
+  #
+  #
+  #
+  getFilePath: ->
+    @cacheFile
+
+  #
+  #
+  #
+  persist: ->
+    @_writeCache()
 
   #
   # Remove all cache entries for scope.
@@ -51,7 +58,7 @@ module.exports = class FileChangeTracker
   # Remove cache entry of file for scope.
   #
   clean: (file, scope = @_defaultScope) ->
-    return unless @_.isString(file) && file.length > 0
+    return unless _.isString(file) && file.length > 0
 
     mapping = @getMapping(scope)
     delete mapping[file]
@@ -63,7 +70,7 @@ module.exports = class FileChangeTracker
   # Check file for changes for scope.
   #
   hasChanged: (file, scope = @_defaultScope) ->
-    return false unless @_.isString(file) && file.length > 0
+    return false unless _.isString(file) && file.length > 0
 
     @_hasChanged(file, scope)
 
@@ -74,33 +81,25 @@ module.exports = class FileChangeTracker
   # indirectly.
   #
   update: (file, scope = @_defaultScope) ->
-    return @updateMultiple(file, scope) if @_.isArray(file)
-    return unless @_.isString(file) && file.length > 0
+    return @updateMultiple(file, scope) if _.isArray(file)
+    return unless _.isString(file) && file.length > 0
+    return unless @grunt.file.isFile(file)
 
     @getMapping(scope)[file] = @getFileData(file)
-    @_writeFileCache(file, scope)
 
   #
   # Update cache entres of each file in file for scope.
   #
   updateMultiple: (files, scope = @_defaultScope) ->
-    return unless @_.isArray(files)
-    return unless @_.size(files) > 0
+    return unless _.isArray(files)
+    return unless _.size(files) > 0
 
     mapping = @getMapping(scope)
 
-    @_.each files, (file) =>
-      mapping[file] = @getFileData(file) if @_.isString(file) && file.length > 0
+    _.each files, (file) =>
+      mapping[file] = @getFileData(file) if _.isString(file) && file.length > 0
 
     @setMapping(mapping, scope)
-    @_writeCache()
-
-  #
-  # Reload the mapping from the cache file.
-  #
-  reloadMapping: ->
-    @_mapping = @_loadMapping()
-
 
   #
   # Give the mapping object for scope.
@@ -124,7 +123,7 @@ module.exports = class FileChangeTracker
   # Get cache entry timestamp of file for scope.
   #
   getTimestamp: (file, scope = @_defaultScope) ->
-    return 0 unless @_.isString(file) && file.length > 0
+    return 0 unless _.isString(file) && file.length > 0
 
     @getData(file, scope).mtime || 0
 
@@ -132,7 +131,7 @@ module.exports = class FileChangeTracker
   # Get cache entry checksum of file for scope.
   #
   getChecksum: (file, scope = @_defaultScope) ->
-    return null unless @_.isString(file) && file.length > 0
+    return null unless _.isString(file) && file.length > 0
 
     @getData(file, scope).checksum || null
 
@@ -140,7 +139,7 @@ module.exports = class FileChangeTracker
   # Get cache entry timestamp/checksum of file for scope.
   #
   getData: (file, scope = @_defaultScope) ->
-    return null unless @_.isString(file) && file.length > 0
+    return null unless _.isString(file) && file.length > 0
 
     @getMapping(scope)[file] || {}
 
@@ -149,8 +148,8 @@ module.exports = class FileChangeTracker
   # Get file timestamp of file for scope.
   #
   getFileTimestamp: (file) ->
-    return 0 unless @_.isString(file) && file.length > 0
-    return 0 unless @g.file.exists(file)
+    return 0 unless _.isString(file) && file.length > 0
+    return 0 unless @grunt.file.exists(file)
 
     @getFileData(file).mtime || 0
 
@@ -158,8 +157,8 @@ module.exports = class FileChangeTracker
   # Get file checksum of file for scope.
   #
   getFileChecksum: (file) ->
-    return null unless @_.isString(file) && file.length > 0
-    return null unless @g.file.exists(file)
+    return null unless _.isString(file) && file.length > 0
+    return null unless @grunt.file.exists(file)
 
     @getFileData(file).checksum || null
 
@@ -167,11 +166,11 @@ module.exports = class FileChangeTracker
   # Get file timestamp/checksum of file for scope.
   #
   getFileData: (file) ->
-    return null unless @_.isString(file) && file.length > 0
-    return null unless @g.file.exists(file)
+    return null unless _.isString(file) && file.length > 0
+    return null unless @grunt.file.exists(file)
 
     {
-      mtime: @fs.statSync(file).mtime.getTime()
+      mtime: Fs.statSync(file).mtime.getTime()
       checksum: @FileChecksum.hexDigest(file)
     }
 
@@ -180,21 +179,13 @@ module.exports = class FileChangeTracker
 
   # @nodoc
    _loadMapping: ->
-    @JsonFile.read(@_cacheFile)
+    @JsonFile.read(@getFilePath())
 
   # @nodoc
-  _writeFileCache: (file, scope) ->
-    mapping = @_loadMapping()
-    mapping[scope] or= {}
-    mapping[scope][file] = @getMapping(scope)[file]
+  _writeCache: ->
+    mapping = @_mapping || {}
 
-    @_writeCache(mapping)
-
-  # @nodoc
-  _writeCache: (mapping = null) ->
-    mapping = @_mapping if mapping == null
-
-    @JsonFile.write(@_cacheFile, mapping, true)
+    @JsonFile.write(@getFilePath(), mapping, true)
 
   # @nodoc
   _hasChanged: (file, scope) ->

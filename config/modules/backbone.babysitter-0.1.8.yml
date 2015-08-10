@@ -9,7 +9,7 @@ tasks:
 
 options:
   basePath: 'bower_components/backbone.babysitter/lib'
-  destPath: 'tmp/graspi/build/backbone.babysitter'
+  destFolder: 'backbone.babysitter'
   js:
     destFile: 'backbone.babysitter.js'
     files:

@@ -16,8 +16,8 @@ module.exports = class TaskHelper extends require('./abstract')
 
     target = @getGruntTaskTarget().replace(/(\.|\:)/g, '-')
 
-    @g.config.set(@getGruntTask(), @buildConfig())
-    @g.task.run @getGruntTask()
+    @grunt.config.set(@getGruntTask(), @buildConfig())
+    @grunt.task.run @getGruntTask()
 
   buildConfig: ->
     watchConfig = _.inject @getConfig().live.watch.options, {}, (memo, value, key) =>
@@ -32,12 +32,12 @@ module.exports = class TaskHelper extends require('./abstract')
     cfg.files   = []
 
     _.each @getConfig().live.watch.groups, (group, group_name) =>
-      group_name = "#{@emc.env_name}-#{@emc.mod_name}-#{group_name}"
+      group_name = "#{@getEnvName()}-#{@getModName()}-#{group_name}"
 
       cfg[group_name]         = {}
       cfg[group_name].options = watchConfig
       cfg[group_name].files   = group.files
       cfg[group_name].tasks   = _.map group.tasks, (task) =>
-        "graspi:#{@emc.env_name}:#{@emc.mod_name}:#{task}"
+        "graspi:#{@getEnvName()}:#{@getModName()}:#{task}"
 
     cfg

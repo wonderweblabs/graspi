@@ -13,8 +13,8 @@ module.exports = class TaskHelper extends require('./abstract')
 
   getFiles: ->
     [
-      File.join(@getAppConfig().destPath, '**/*.css'),
-      File.join(@getAppConfig().destPath, '**/*.css.map'),
+      File.join(@getDestPath(), '**/*.css'),
+      File.join(@getDestPath(), '**/*.css.map'),
       File.join(@getTmpPath(), '**/*.sass'),
       File.join(@getTmpPath(), '**/*.sass.map'),
       File.join(@getTmpPath(), '**/*.scss'),

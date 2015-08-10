@@ -1,13 +1,10 @@
 module.exports = class FileChecksum
 
-  constructor: (fs, crypto, grunt) ->
-    @g      = grunt
-    @fs     = fs
-    @crypto = crypto
+  constructor: (@fs, @crypto, @grunt) ->
 
   hexDigest: (file, length = 64, algorithm = 'sha256') ->
-    return null unless @g.file.exists(file)
-    return null unless @g.file.isFile(file)
+    return null unless @grunt.file.exists(file)
+    return null unless @grunt.file.isFile(file)
 
     hash = @crypto.createHash(algorithm).update(@fs.readFileSync(file)).digest('hex')
 

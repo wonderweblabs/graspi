@@ -8,7 +8,7 @@ tasks:
 
 options:
   basePath: 'bower_components/backbone'
-  destPath: 'tmp/graspi/build/backbone'
+  destFolder: 'backbone'
   js:
     destFile: 'backbone.js'
     files:

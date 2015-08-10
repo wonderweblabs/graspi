@@ -6,14 +6,19 @@ mappingData = {}
 
 module.exports = class Cache
 
-  constructor: (grunt) ->
-    @g        = grunt
+  constructor: (@grunt) ->
 
   getTrackFile: ->
-    @_jsonFile or= JF(@g)
+    @_jsonFile or= JF(@grunt)
+
+  getDestPath: (emc) ->
+    @grunt.graspi.config.getDestPath(emc)
 
   getBuildInfo: (emc) ->
-    return { built: false, built_at: 0 } unless @g.file.exists(emc.emc.options.destPath)
+    return { built: false, built_at: 0 } unless _.isObject(emc)
+    return { built: false, built_at: 0 } unless _.isObject(emc.emc)
+    return { built: false, built_at: 0 } unless _.isObject(emc.emc.options)
+    return { built: false, built_at: 0 } unless @grunt.file.exists(@getDestPath(emc))
 
     mapping = @_readTrackFile(emc)
 

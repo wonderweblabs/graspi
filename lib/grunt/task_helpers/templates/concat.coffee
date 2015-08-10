@@ -29,8 +29,8 @@ module.exports = class TaskHelper extends require('./abstract')
     files = []
 
     if @includeDependencies()
-      deps = new Deps(_, @g, @emc.config)
-      emcs = deps.buildDependenciesEmCList(@getEnvName(), @getModName())
+      deps = new Deps(@grunt)
+      emcs = deps.buildDependenciesEmcList(@options)
 
       _.each emcs, (dep_emc) =>
         return if dep_emc.env_name == @getEnvName() && dep_emc.mod_name == @getModName()
@@ -41,7 +41,7 @@ module.exports = class TaskHelper extends require('./abstract')
         destPath = dep_emc.emc.options.templates.destPath
         destPath or= dep_emc.emc.options.destPath
         destFile = File.join(destPath, dep_emc.emc.options.templates.destFile)
-        return unless @g.file.exists(destFile)
+        return unless @grunt.file.exists(destFile)
 
         files.push(destFile)
 

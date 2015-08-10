@@ -13,11 +13,11 @@ module.exports = class TaskHelper extends require('./abstract')
 
   getFiles: ->
     [
-      File.join(@getAppConfig().destPath, '**/*.jpeg')
-      File.join(@getAppConfig().destPath, '**/*.jpg')
-      File.join(@getAppConfig().destPath, '**/*.gif')
-      File.join(@getAppConfig().destPath, '**/*.png')
-      File.join(@getAppConfig().destPath, '**/*.svg')
+      File.join(@getDestPath(), '**/*.jpeg')
+      File.join(@getDestPath(), '**/*.jpg')
+      File.join(@getDestPath(), '**/*.gif')
+      File.join(@getDestPath(), '**/*.png')
+      File.join(@getDestPath(), '**/*.svg')
     ]
 
   buildConfig: ->

@@ -7,7 +7,7 @@ tasks:
 
 options:
   basePath: 'bower_components/requirejs'
-  destPath: 'tmp/graspi/build/requirejs'
+  destFolder: 'requirejs'
   js:
     destFile: 'require.js'
     files:

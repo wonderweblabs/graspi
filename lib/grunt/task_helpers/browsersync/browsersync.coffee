@@ -24,11 +24,11 @@ module.exports = class TaskHelper extends require('./abstract')
 
     target = @getGruntTaskTarget().replace(/(\.|\:)/g, '-')
 
-    @g.config.set(@getGruntTask(), @buildConfig())
-    @g.task.run @getGruntTask()
+    @grunt.config.set(@getGruntTask(), @buildConfig())
+    @grunt.task.run @getGruntTask()
 
   buildConfig: ->
-    cfg = @g.config.get('browserSync') || {}
+    cfg = @grunt.config.get('browserSync') || {}
     cfg.options or= {}
     cfg.bsFiles or= []
 

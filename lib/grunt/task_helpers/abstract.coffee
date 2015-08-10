@@ -10,10 +10,10 @@ FCT   = require('../util/file_change_tracker')
 # * isCacheValid                > true/false
 # * getTaskRunner               > Task runner that executed this helper
 # * getFileCache                > file_change_tracker
-# * getConfig                   > @emc.emc
-# * getAppConfig                > @emc.emc.options
-# * getEnvName                  > @emc.env_name
-# * getModName                  > @emc.mod_name
+# * getConfig                   > @getEmc().emc
+# * getAppConfig                > @getEmc().emc.options
+# * getEnvName                  > @options.env_name
+# * getModName                  > @options.mod_name
 # * getTmpPath                  > tmp folder > default: tmpPath + env_name + mod_name
 # * getDestPath                 > dest folder
 # * getBasePath                 > src folder
@@ -32,8 +32,8 @@ module.exports = class AbstractTaskHelper
   # If the task should run under cache conditions
   cached: true
 
-  # Appendix for cache key "#{@emc.env_name}-#{@emc.mod_name}"
-  # e.g. "#{@emc.env_name}-#{@emc.mod_name}-test" would be configured
+  # Appendix for cache key "#{@options.env_name}-#{@options.mod_name}"
+  # e.g. "#{@options.env_name}-#{@options.mod_name}-test" would be configured
   # with cacheKeyAppendix: 'test'
   cacheKeyAppendix: null
 
@@ -47,13 +47,19 @@ module.exports = class AbstractTaskHelper
   gruntTaskTargetAppendix: null
 
 
-  # init
-  constructor: (grunt, emc, taskRunner) ->
-    @g            = grunt
-    @emc          = emc
-    @_taskRunner  = taskRunner
-    @_fileCache   = FCT(@g, @getConfig().cacheFile, @getCacheKey())
-
+  #
+  # Options:
+  # * env_name (req)
+  # * mod_name (req)
+  # * task_name
+  # * main_task_name
+  # * resolveDeps [null/true/false]
+  # * depsTask
+  # * depsCaching [null/true/false]
+  # * emc
+  # * cached [true/false]
+  #
+  constructor: (@grunt, @options) ->
 
   # whether run should return or execute
   isEnabled: ->
@@ -61,6 +67,8 @@ module.exports = class AbstractTaskHelper
 
   # whether the the call should be cached (check for file changes)
   isCached: ->
+    return false if @options.cached == false
+
     _.result @, 'cached'
 
   # whether the cache is valid or not. If not, the run task
@@ -71,15 +79,19 @@ module.exports = class AbstractTaskHelper
 
   # To execute tasks
   getTaskRunner: ->
-    @_taskRunner
+    @grunt.graspi.taskRunner
 
   # File cache instance
   getFileCache: ->
-    @_fileCache
+    @grunt.graspi.config.getFileCacheTracker(@getEmc())
+
+  # EMC
+  getEmc: ->
+    @options.emc
 
   # EMC
   getConfig: ->
-    @emc.emc
+    @options.emc.emc
 
   # EMC.options (app config)
   getAppConfig: ->
@@ -87,19 +99,23 @@ module.exports = class AbstractTaskHelper
 
   # Environment
   getEnvName: ->
-    @emc.env_name
+    @options.env_name
 
   # Module
   getModName: ->
-    @emc.mod_name
+    @options.mod_name
+
+  # Task
+  getTaskName: ->
+    @options.task_name
 
   # App tmp path
   getTmpPath: ->
-    File.join(@getConfig().tmpPath, @emc.env_name, @emc.mod_name)
+    File.join(@getConfig().tmpPath, @options.env_name, @options.mod_name)
 
   # Module destination path
-  getDestPath: ->
-    @getAppConfig().destPath
+  getDestPath: (emc = null) ->
+    @grunt.graspi.config.getDestPath(emc || @getEmc())
 
   # Module base src files path
   getBasePath: ->
@@ -120,7 +136,7 @@ module.exports = class AbstractTaskHelper
 
   # The grunt task to run
   getGruntTask: ->
-    @g.fail.fatal 'Define a grunt task to run.' unless _.isString(_.result(@, 'gruntTask'))
+    @grunt.fail.fatal 'Define a grunt task to run.' unless _.isString(_.result(@, 'gruntTask'))
 
     _.result(@, 'gruntTask')
 
@@ -176,11 +192,11 @@ module.exports = class AbstractTaskHelper
 
     target = @getGruntTaskTarget().replace(/(\.|\:)/g, '-')
 
-    @g.config.set("#{@getGruntTask()}.#{target}", @buildConfig())
-    @g.task.run "#{@getGruntTask()}:#{target}"
+    @grunt.config.set("#{@getGruntTask()}.#{target}", @buildConfig())
+    @grunt.task.run "#{@getGruntTask()}:#{target}"
 
   # When extending: implement following.
   # Should return the config for the task configured
   # in gruntTask.
   buildConfig: ->
-    @g.fail.fatal 'Implement buildConfig method.'
+    @grunt.fail.fatal 'Implement buildConfig method.'

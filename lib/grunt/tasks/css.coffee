@@ -1,12 +1,24 @@
-module.exports = (grunt, config, options) ->
+module.exports = (grunt) ->
 
-  taskRunner  = require('../util/task_runner')(grunt, config, options)
+  taskRunner = grunt.graspi.taskRunner
 
   grunt.registerTask 'graspi_css', (env_name, mod_name) ->
-    taskRunner.runGraspiTask env_name, mod_name, 'graspi_css_copy'
-    taskRunner.runGraspiTask env_name, mod_name, 'graspi_css_sass_compile'
-    taskRunner.runGraspiTask env_name, mod_name, 'graspi_css_concat'
-    taskRunner.runGraspiTask env_name, mod_name, 'graspi_css_minify'
+    taskRunner.runGraspiTask
+      env_name: env_name
+      mod_name: mod_name
+      task_name: 'graspi_css_copy'
+    taskRunner.runGraspiTask
+      env_name: env_name
+      mod_name: mod_name
+      task_name: 'graspi_css_sass_compile'
+    taskRunner.runGraspiTask
+      env_name: env_name
+      mod_name: mod_name
+      task_name: 'graspi_css_concat'
+    taskRunner.runGraspiTask
+      env_name: env_name
+      mod_name: mod_name
+      task_name: 'graspi_css_minify'
 
   grunt.registerTask 'graspi_css_copy', (env_name, mod_name) ->
     taskRunner.runGraspiTaskHelper env_name, mod_name, 'css/copy'
@@ -30,5 +42,8 @@ module.exports = (grunt, config, options) ->
     taskRunner.runGraspiTaskHelper env_name, mod_name, 'css/clean'
 
   grunt.registerTask 'graspi_css_clean_full', (env_name, mod_name) ->
-    taskRunner.runGraspiTask env_name, mod_name, 'graspi_css_clean'
+    taskRunner.runGraspiTask
+      env_name: env_name
+      mod_name: mod_name
+      task_name: 'graspi_css_clean'
     taskRunner.runGraspiTaskHelper env_name, mod_name, 'css/clean_full'

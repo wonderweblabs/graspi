@@ -9,7 +9,7 @@ tasks:
 
 options:
   basePath: 'bower_components/backbone.wreqr/lib'
-  destPath: 'tmp/graspi/build/backbone.wreqr'
+  destFolder: 'backbone.wreqr'
   js:
     destFile: 'backbone.wreqr.js'
     files:

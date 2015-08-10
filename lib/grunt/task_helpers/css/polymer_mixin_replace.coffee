@@ -46,7 +46,7 @@ module.exports = class TaskHelper extends require('./abstract')
     return match if placeholder == null
 
     file = @getDestFile()
-    mixin = @_getPolymerMixinRegex(placeholder).exec(@g.file.read(file) || '')
+    mixin = @_getPolymerMixinRegex(placeholder).exec(@grunt.file.read(file) || '')
     mixin = mixin[1] if _.isArray(mixin)
     return match unless _.isString(mixin) && _.size(mixin) > 0
 

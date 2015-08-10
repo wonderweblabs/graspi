@@ -7,7 +7,7 @@ tasks:
 
 options:
   basePath: 'bower_components/jquery/dist'
-  destPath: 'tmp/graspi/build/jquery'
+  destFolder: 'jquery'
   js:
     destFile: 'jquery.js'
     files:

@@ -11,7 +11,7 @@ tasks:
 
 options:
   basePath: 'bower_components/marionette/lib'
-  destPath: 'tmp/graspi/build/marionette'
+  destFolder: 'marionette'
   js:
     destFile: 'marionette.js'
     files:

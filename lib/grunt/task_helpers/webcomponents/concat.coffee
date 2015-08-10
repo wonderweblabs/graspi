@@ -27,7 +27,7 @@ module.exports = class TaskHelper extends require('./abstract')
     return @_files if _.isArray(@_files)
     return [] unless @includeDependencies()
 
-    depList = @getDependencies().buildDependenciesEmCList(@getEnvName(), @getModName())
+    depList = @getDependencies().buildDependenciesEmcList(@options)
     files = _.inject depList, [], (memo, emc) =>
       return memo if emc.env_name == @getEnvName() && emc.mod_name == @getModName()
       return memo unless _.isObject(emc.emc.options.templates)
@@ -36,7 +36,7 @@ module.exports = class TaskHelper extends require('./abstract')
       destPath = emc.emc.options.templates.destPath
       destPath or= emc.emc.options.destPath
       destFile = File.join(destPath, emc.emc.options.templates.destFile)
-      return memo unless @g.file.exists(destFile)
+      return memo unless @grunt.file.exists(destFile)
 
       memo.push destFile
       memo
@@ -44,7 +44,7 @@ module.exports = class TaskHelper extends require('./abstract')
     @_files = _.uniq(files)
 
   getDependencies: ->
-    @_deps or= new Deps(_, @g, @emc.config)
+    @_deps or= new Deps(@grunt)
 
   buildConfig: ->
     cfg                   = {}

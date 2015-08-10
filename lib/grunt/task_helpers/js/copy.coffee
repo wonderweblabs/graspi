@@ -18,9 +18,9 @@ module.exports = class TaskHelper extends require('./abstract')
       return false if memo == false
 
       file = File.join(@getBasePath(), file)
-      return !@fileCacheHasChanged(file) if @g.file.isFile(file)
+      return !@fileCacheHasChanged(file) if @grunt.file.isFile(file)
 
-      _.inject @g.file.expand(file), true, (subMemo, subFile) =>
+      _.inject @grunt.file.expand(file), true, (subMemo, subFile) =>
         if subMemo == false then false else !@fileCacheHasChanged(subFile)
 
   # ------------------------------------------------------------
@@ -43,7 +43,7 @@ module.exports = class TaskHelper extends require('./abstract')
         if @fileCacheHasChanged(file)
           resultFile = file.replace(@getBasePath(), '')
           resultFile = File.join(@getTmpPath(), resultFile)
-          @g.file.delete(resultFile) if @g.file.exists(resultFile)
+          @grunt.file.delete(resultFile) if @grunt.file.exists(resultFile)
 
           @fileCacheUpdate(file)
           true

@@ -16,14 +16,14 @@ module.exports = class TaskHelper extends require('./abstract')
   isCacheValid: ->
     _.inject @getAllSassFiles(), true, (memo, file) =>
       return false if memo == false
-      return memo unless @g.file.isFile(file)
+      return memo unless @grunt.file.isFile(file)
 
       !@fileCacheHasChanged(file)
 
   # ------------------------------------------------------------
 
   getAllSassFiles: ->
-    @_allSassFiles or= @g.file.expand(File.join(@getBasePath(), '**/*.{sass,scss}'))
+    @_allSassFiles or= @grunt.file.expand(File.join(@getBasePath(), '**/*.{sass,scss}'))
 
   getSassFiles: ->
     @_sassFiles or= _.inject (@getAppConfig().css.files || []), [], (memo, file) =>
@@ -40,7 +40,7 @@ module.exports = class TaskHelper extends require('./abstract')
 
     sassFiles = _.inject @getSassFiles(), [], (memo, filesEntry) =>
       filesEntry = File.join(@getBasePath(), filesEntry)
-      filesEntry = @g.file.expand(filesEntry) if !@g.file.isFile(filesEntry)
+      filesEntry = @grunt.file.expand(filesEntry) if !@grunt.file.isFile(filesEntry)
       filesEntry = [filesEntry] unless _.isArray(filesEntry)
 
       memo.concat(filesEntry)
