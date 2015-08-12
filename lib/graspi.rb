@@ -45,4 +45,11 @@ module Graspi
   require 'graspi/config'
   require 'graspi/manifest'
 
+  # application root path (the app that uses curo)
+  mattr_accessor :app_root
+
+  # application public folder
+  mattr_accessor :app_public
+  @@app_public = ''
+
 end

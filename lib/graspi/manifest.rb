@@ -23,7 +23,7 @@ module Graspi
     def resolve_absolute_path(file)
       path = resolve_path(file) || ''
 
-      File.join(::Rails.root, 'public', path)
+      File.join(Graspi.app_root, Graspi.app_public, path)
     end
 
   end

@@ -57,11 +57,52 @@ module.exports = class TaskRunner
     else
       @getRunner().runGruntTask(options)
 
+  #
+  # Options:
+  # * env_name (req)
+  # * mod_name (req)
+  # * task_name
+  # * main_task_name
+  # * resolveDeps [null/true/false]
+  # * depsTask
+  # * depsCaching [null/true/false]
+  #
+  runDynamicGraspiTask: (options = {}) ->
+    unless _.isString(options.env_name)
+      @grunt.fail.fatal('options.env_name missing.')
+
+    unless _.isString(options.mod_name)
+      @grunt.fail.fatal('options.mod_name missing.')
+
+    unless _.isString(options.task_name)
+      @grunt.fail.fatal('options.task_name missing.')
+
+    @_appendOptions(options)
+
+    if _.isEmpty(options.main_task_name)
+      options.main_task_name = options.task_name
+
+    if options.resolveDeps == true
+      runList = @getDependencyListBuilder().buildExecutionList(options)
+
+    runList or= []
+    runList = _.filter runList, (runListEntry) => runListEntry.mod_name != options.mod_name
+
+    _.each (options.emc.emc.tasks[options.task_name] || []), (task_name) =>
+      runList.push
+        env_name:       options.env_name
+        mod_name:       options.mod_name
+        task_name:      task_name
+        main_task_name: task_name
+        resolveDeps:    options.resolveDeps
+        depsTask:       options.depsTask
+        depsCaching:    options.depsCaching
+
+    @getRunner().runTasks(runList)
 
   #
   # run task helper
   #
-
   runGraspiTaskHelper: (env_name, mod_name, helperPath) ->
     helperPath = @_resolveHelperPath(helperPath)
 

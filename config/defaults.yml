@@ -286,7 +286,7 @@ postpipeline:
 live:
   # grunt-contrib-watch
   watch:
-    groups: []
+    groups: {}
     options:
       spawn:          false
       # interrupt:      false
@@ -351,6 +351,7 @@ tasks:
     - graspi_filerev_clean
     - graspi_manifest_clean
     - graspi_replace_clean
+    - graspi_build_clean
   graspi_clean_full:
     - graspi_images_clean_full
     - graspi_fonts_clean_full
@@ -361,6 +362,7 @@ tasks:
     - graspi_filerev_clean_full
     - graspi_manifest_clean_full
     - graspi_replace_clean_full
+    - graspi_build_clean_full
   graspi_build_styles:
     - 'graspi_css_copy'
     - 'graspi_css_sass_compile'

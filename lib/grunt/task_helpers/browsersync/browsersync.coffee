@@ -22,8 +22,6 @@ module.exports = class TaskHelper extends require('./abstract')
     return if @isEnabled() == false
     return if @isCached() && @isCacheValid()
 
-    target = @getGruntTaskTarget().replace(/(\.|\:)/g, '-')
-
     @grunt.config.set(@getGruntTask(), @buildConfig())
     @grunt.task.run @getGruntTask()
 

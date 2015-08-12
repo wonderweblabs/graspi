@@ -91,8 +91,13 @@ module.exports = class Dependencies
     emc       = @getEmc(env_name, mod_name) || {}
     buildInfo = @getCache().getBuildInfo(emc)
 
+    # ensure data
+    @_moduleOptions[mod_name] or= {}
+    unless _.isBoolean(@_moduleOptions[mod_name].cached)
+      @_moduleOptions[mod_name].cached = cached
+
     # skip if cached and valid
-    if cached && buildInfo.built == true && cached == true
+    if @_moduleOptions[mod_name].cached == true && buildInfo.built == true
       built_at = new Date(buildInfo.built_at)
       @grunt.log.writeln ''
       @grunt.log.ok "Cached task (built at #{built_at}):"
@@ -100,8 +105,6 @@ module.exports = class Dependencies
       return
 
     # ensure data
-    @_moduleOptions[mod_name] or= {}
-    @_moduleOptions[mod_name].cached          = cached unless _.isBoolean(@_moduleOptions[mod_name].cached)
     @_moduleOptions[mod_name].emc             or= emc
     @_moduleOptions[mod_name].env_name        or= env_name
     @_moduleOptions[mod_name].mod_name        or= mod_name

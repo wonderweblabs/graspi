@@ -45,6 +45,9 @@ module.exports = class GraspiConfig
   getModuleNames: ->
     @mod_names
 
+  getEnvironments: ->
+    @config.environments
+
   getFileCacheTracker: (emc) ->
     return null unless _.isObject(emc)
     return null unless _.isObject(emc.emc)
@@ -82,18 +85,11 @@ module.exports = class GraspiConfig
       emc: mod
     }
 
-  getEnvironments: ->
-    @config.environments
-
-  eachEmc: (target1 = null, target2 = null, callback) ->
+  eachEmc: (target_env_name = null, target_mod_name = null, callback) ->
     return unless _.isFunction(callback)
 
-    target_env_name = @selectEnvironment(target1, target2)
-    target_mod_name = if target_env_name != target1 then target1 else target2
-    target_mod_name = null if !_.isString(target_mod_name) || target_mod_name.length <= 0
-
     _.each @getEnvironments(), (env, env_name) =>
-      return unless env_name == target_env_name
+      return unless target_env_name == null || env_name == target_env_name
 
       _.each env.modules, (mod, mod_name) =>
         return unless target_mod_name == null || mod_name == target_mod_name
@@ -119,14 +115,6 @@ module.exports = class GraspiConfig
           env_name: env_name
           mod_name: mod_name
           emc: mod
-
-  selectEnvironment: (target1, target2) ->
-    environments = @getEnvironmentNames()
-
-    return target1 if _.includes environments, target1
-    return target2 if _.includes environments, target2
-
-    @getEnv()
 
   saveFileCacheTrackers: ->
     _.each @_fileCacheTrackers, (fct) =>

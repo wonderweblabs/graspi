@@ -9,6 +9,8 @@ module Graspi
         super
 
         Graspi.config_file = options.config_file
+        Graspi.app_root = app.root
+        Graspi.app_public = 'source'
       end
 
       helpers do

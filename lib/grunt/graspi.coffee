@@ -91,6 +91,9 @@ module.exports = (grunt) ->
       console.log grunt.option.flags()
       grunt.log.ok '-------------------'
 
+    if grunt.option('task_name') == 'watch'
+      grunt.option('resolveDeps', false)
+
     grunt.graspi.taskRunner.runGraspiTask
       env_name:       grunt.option('env_name')
       mod_name:       grunt.option('mod_name')
@@ -111,11 +114,11 @@ module.exports = (grunt) ->
     taskRunner.runGraspiTaskHelper env_name, mod_name, 'graspi_build/build'
     taskRunner.runGraspiTaskHelper env_name, mod_name, 'graspi_build/after_build'
 
-  grunt.registerTask 'graspi_clean', (env_name, mod_name) ->
-    taskRunner.runGraspiTaskHelper env_name, mod_name, 'graspi_clean/clean'
+  grunt.registerTask 'graspi_build_clean', (env_name, mod_name) ->
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'graspi_build/clean'
 
-  grunt.registerTask 'graspi_clean_full', (env_name, mod_name) ->
-    taskRunner.runGraspiTaskHelper env_name, mod_name, 'graspi_clean/clean_full'
+  grunt.registerTask 'graspi_build_clean_full', (env_name, mod_name) ->
+    taskRunner.runGraspiTaskHelper env_name, mod_name, 'graspi_build/clean_full'
 
   # ----------------------------------------------------------------
   # build dynamic tasks
@@ -126,11 +129,20 @@ module.exports = (grunt) ->
     customTasks = customTasks.concat(Object.keys(emc.emc.tasks || {}))
   customTasks = _.uniq(customTasks)
   customTasks = _.filter customTasks, (task_name) =>
-    !_.includes(['build', 'graspi_build'], task_name)
+    !_.includes([
+      'build', 'graspi_build',
+      'build_clean', 'graspi_build_clean',
+      'build_clean_full', 'graspi_build_clean_full'
+    ], task_name)
 
   _.each customTasks, (task_name) =>
     grunt.registerTask task_name, (env_name, mod_name) =>
-      grunt.graspi.taskRunner.runDynamicGraspiTask env_name, mod_name, task_name, true
+      grunt.graspi.taskRunner.runDynamicGraspiTask
+        env_name: env_name
+        mod_name: mod_name
+        task_name: task_name
+        main_task_name: task_name
+        resolveDeps: false
 
   # ----------------------------------------------------------------
   # return config

@@ -12,8 +12,9 @@ module Graspi
 
     # path - app root
     initializer 'curo.load_app_root' do |app|
-      Graspi::Rails.root = app.root
       Graspi::Rails.app = app
+      Graspi.app_root = app.root
+      Graspi.app_public = 'public'
     end
 
   end

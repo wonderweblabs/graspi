@@ -51,16 +51,7 @@ module.exports = class Runner
     @grunt.option "#{mod_name}_emc",            options.emc
 
     cfg             = {}
-    cfg[task_name]  = {}
+    cfg["graspi_#{task_name}"]  = {}
 
     @grunt.config.merge cfg
     @grunt.task.run "graspi_#{task_name}:#{options.env_name}:#{mod_name}"
-
-
-  runDynamicTask: (env_name, mod_name, task_name) ->
-    emc = @getEmc(env_name, mod_name)
-    taskList = emc.emc.tasks[task_name]
-
-    _.each taskList, (tn) =>
-      @runGruntTask(env_name, mod_name, tn)
-

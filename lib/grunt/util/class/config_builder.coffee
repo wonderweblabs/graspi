@@ -190,24 +190,23 @@ module.exports = class GraspiConfigBuilder
   # @nodoc
   _mergeModules: (modules, finalConfig) ->
     _.each finalConfig.environments, (env, env_name) =>
-      _.each Object.keys(env.modules), (mod_name) =>
+      _.each modules, (mod, mod_name) =>
         return unless _.isObject(modules[mod_name])
 
-        config = _.clone(modules[mod_name])
+        config = _.clone(mod)
         delete config.environments
-        delete config.defaultEnvironment
 
         # merge module
-        modConfig = _.mergeRecursive(env.modules[mod_name], config)
-        env.modules[mod_name] = modConfig
+        modConfig = _.mergeRecursive(finalConfig.environments[env_name].modules[mod_name], config)
+        finalConfig.environments[env_name].modules[mod_name] = modConfig
 
         # merge environment config
         return unless _.isObject(modules[mod_name].environments)
         return unless _.isObject(modules[mod_name].environments[env_name])
 
-        config = _.clone(modules[mod_name].environments[env_name])
-        modConfig = _.mergeRecursive(modConfig, config)
-        env.modules[mod_name] = modConfig
+        config = _.clone(mod.environments[env_name])
+        modConfig = _.mergeRecursive(finalConfig.environments[env_name].modules[mod_name], config)
+        finalConfig.environments[env_name].modules[mod_name] = modConfig
 
   # @nodoc
   _updateChangeTracker: (files) ->
