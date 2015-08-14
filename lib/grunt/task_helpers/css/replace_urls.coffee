@@ -18,7 +18,7 @@ module.exports = class TaskHelper extends require('./abstract')
   # ------------------------------------------------------------
 
   getJsonFile: ->
-    @_jsonFile or= JsonFile(@grunt)
+    @_jsonFile or= new JsonFile(@grunt)
 
   getManifestMapping: ->
     mapping = @getJsonFile().read(@getConfig().postpipeline.manifest.options.path)

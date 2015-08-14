@@ -1,7 +1,5 @@
-_     = require 'lodash'
-
 module.exports = class TaskHelper extends require('./abstract')
 
   run: ->
-    @getCache().clearBuildCache(@getEmc())
+    @getCache().setBuildCache(@getEmc(), @options.wrapping_task_name)
     @getCache().persist()

@@ -30,7 +30,7 @@ module.exports = class TaskHelper extends require('./abstract')
   # -----
 
   getJsonFile: ->
-    @_jsonFile or= JsonFile(@g)
+    @_jsonFile or= new JsonFile(@grunt)
 
   getManifest: ->
     @_manifest or= @_readManifestFile()

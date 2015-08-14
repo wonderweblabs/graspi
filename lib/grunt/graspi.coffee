@@ -36,11 +36,7 @@ module.exports = (grunt) ->
 
   # cached mode config/on/off
   unless _.isBoolean(grunt.option('cached'))
-    grunt.option('cached', null)
-
-  # cached dependencies mode config/on/off
-  unless _.isBoolean(grunt.option('cachedDeps'))
-    grunt.option('cachedDeps', null)
+    grunt.option('cached', true)
 
   # resolve dependency list
   unless _.isBoolean(grunt.option('resolveDeps'))
@@ -71,8 +67,8 @@ module.exports = (grunt) ->
 
   # require
   grunt.graspi or= {}
-  grunt.graspi.config     = require('./util/config')(grunt)
-  grunt.graspi.taskRunner = require('./util/task_runner')(grunt)
+  grunt.graspi.config     = require('./util/config_builder_service')(grunt).build()
+  grunt.graspi.taskRunner = require('./util/task_runner_service')(grunt)
   taskRunner              = grunt.graspi.taskRunner
 
   # task files
@@ -98,9 +94,8 @@ module.exports = (grunt) ->
       env_name:       grunt.option('env_name')
       mod_name:       grunt.option('mod_name')
       task_name:      grunt.option('task_name')
-      main_task_name: grunt.option('task_name')
+      cached:         if grunt.option('cached') == false then false else true
       resolveDeps:    if grunt.option('resolveDeps') == false then false else true
-      depsCaching:    grunt.option('cachedDeps')
       depsTask:       grunt.option('depsTask') || grunt.option('task_name')
 
     grunt.graspi.config.saveFileCacheTrackers()
@@ -110,9 +105,37 @@ module.exports = (grunt) ->
   # base tasks
   # ----------------------------------------------------------------
 
-  grunt.registerTask 'graspi_build', (env_name, mod_name) ->
-    taskRunner.runGraspiTaskHelper env_name, mod_name, 'graspi_build/build'
-    taskRunner.runGraspiTaskHelper env_name, mod_name, 'graspi_build/after_build'
+  grunt.registerTask 'graspi_build_before', (env_name, mod_name, wrapping_task_name) ->
+    taskRunner.runGraspiTaskHelper(
+      env_name,
+      mod_name,
+      'graspi_build/build_before',
+      { wrapping_task_name: wrapping_task_name }
+    )
+
+  grunt.registerTask 'graspi_build_before_each', (env_name, mod_name, wrapping_task_name) ->
+    taskRunner.runGraspiTaskHelper(
+      env_name,
+      mod_name,
+      'graspi_build/build_before_each',
+      { wrapping_task_name: wrapping_task_name }
+    )
+
+  grunt.registerTask 'graspi_build_after', (env_name, mod_name, wrapping_task_name) ->
+    taskRunner.runGraspiTaskHelper(
+      env_name,
+      mod_name,
+      'graspi_build/build_after',
+      { wrapping_task_name: wrapping_task_name }
+    )
+
+  grunt.registerTask 'graspi_build_after_each', (env_name, mod_name, wrapping_task_name) ->
+    taskRunner.runGraspiTaskHelper(
+      env_name,
+      mod_name,
+      'graspi_build/build_after_each',
+      { wrapping_task_name: wrapping_task_name }
+    )
 
   grunt.registerTask 'graspi_build_clean', (env_name, mod_name) ->
     taskRunner.runGraspiTaskHelper env_name, mod_name, 'graspi_build/clean'
@@ -137,12 +160,7 @@ module.exports = (grunt) ->
 
   _.each customTasks, (task_name) =>
     grunt.registerTask task_name, (env_name, mod_name) =>
-      grunt.graspi.taskRunner.runDynamicGraspiTask
-        env_name: env_name
-        mod_name: mod_name
-        task_name: task_name
-        main_task_name: task_name
-        resolveDeps: false
+      # empty
 
   # ----------------------------------------------------------------
   # return config

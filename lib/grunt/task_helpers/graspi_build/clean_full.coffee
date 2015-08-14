@@ -4,3 +4,4 @@ module.exports = class TaskHelper extends require('./abstract')
 
   run: ->
     @getCache().clearBuildCache(@getEmc())
+    @getCache().persist()

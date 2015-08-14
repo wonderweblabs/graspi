@@ -1,6 +1,5 @@
 _     = require 'lodash'
 File  = require 'path'
-Deps  = require '../../util/class/task_runner/dependencies'
 
 module.exports = class TaskHelper extends require('./abstract')
 
@@ -20,26 +19,20 @@ module.exports = class TaskHelper extends require('./abstract')
 
   # ------------------------------------------------------------
 
-  includeDependencies: ->
-    @getConfig().templates.concat.includeDependencies == true
-
   getFilesExpanded: ->
     return @_files if _.isArray(@_files)
 
     files = []
 
     if @includeDependencies()
-      deps = new Deps(@grunt)
-      emcs = deps.buildDependenciesEmcList(@options)
+      _.each @getModuleDependencies(), (module) =>
+        return if module.getEnvName() == @getEnvName() && module.getModName() == @getModName()
+        return if module.getEmcConfig().webcomponent == true
+        return unless _.isObject(module.getEmcOptions().templates)
+        return unless _.isString(module.getEmcOptions().templates.destFile)
 
-      _.each emcs, (dep_emc) =>
-        return if dep_emc.env_name == @getEnvName() && dep_emc.mod_name == @getModName()
-        return if dep_emc.emc.webcomponent == true
-        return unless _.isObject(dep_emc.emc.options.templates)
-        return unless _.isString(dep_emc.emc.options.templates.destFile)
-
-        destPath = @getDestPath(dep_emc)
-        destFile = File.join(destPath, dep_emc.emc.options.templates.destFile)
+        destPath = @getDestPath(module.getEmc())
+        destFile = File.join(destPath, module.getEmcOptions().templates.destFile)
         return unless @grunt.file.exists(destFile)
 
         files.push(destFile)

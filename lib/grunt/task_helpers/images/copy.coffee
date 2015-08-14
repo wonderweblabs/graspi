@@ -1,6 +1,5 @@
 _     = require 'lodash'
 File  = require 'path'
-Deps  = require '../../util/class/task_runner/dependencies'
 
 module.exports = class TaskHelper extends require('./abstract')
 
@@ -22,20 +21,14 @@ module.exports = class TaskHelper extends require('./abstract')
 
   # ------------------------------------------------------------
 
-  includeDependencies: ->
-    @getConfig().images.copy.includeDependencies == true
-
   getImagesFiles: ->
     return @_imageFiles if _.isArray(@_imageFiles)
 
     files = []
     files = files.concat(@_appendForDependencies(files))
-    files = files.concat(@_filesForEmc(@getEmc(), @getBasePath()))
+    files = files.concat(@_filesForModule(@getModule(), @getBasePath()))
 
     @_imageFiles = _.uniq(files)
-
-  getDependencies: ->
-    @_deps or= new Deps(@grunt)
 
   buildConfig: ->
     cfg                        = {}
@@ -44,13 +37,13 @@ module.exports = class TaskHelper extends require('./abstract')
     cfg.files                  = []
 
     # dependencies
-    @_iterateDependencies (emc) =>
-      srcList = _.map (emc.emc.images.copy.formats || []), (format) => "**/*.#{format}"
+    @_iterateDependencies (module) =>
+      srcList = _.map (module.getEmcConfig().images.copy.formats || []), (format) => "**/*.#{format}"
       cfg.files.push
         expand: true
         src: srcList
-        cwd: @getDestPath(emc)
-        dest: File.join(@getDestPath(), emc.mod_name)
+        cwd: @getDestPath(module.getEmc())
+        dest: File.join(@getDestPath(), module.getModName())
         filter: (file) => @fileCacheUpdateIfChanged(file)
 
     # module
@@ -72,25 +65,25 @@ module.exports = class TaskHelper extends require('./abstract')
   _iterateDependencies: (eachFunc) ->
     return unless @includeDependencies()
 
-    _.each @getDependencies().buildDependenciesEmcList(@options), (emc) =>
-      return if emc.env_name == @getEnvName() && emc.mod_name == @getModName()
+    _.each @getModuleDependencies(), (module) =>
+      return if module.getEnvName() == @getEnvName() && module.getModName() == @getModName()
 
-      eachFunc(emc)
+      eachFunc(module)
 
   # @nodoc
   _appendForDependencies: (files) ->
-    @_iterateDependencies (emc) =>
-      return if emc.env_name == @getEnvName() && emc.mod_name == @getModName()
+    @_iterateDependencies (module) =>
+      destPath = File.join(@getDestPath(module.getEmc()))
 
-      files = files.concat(@_filesForEmc(emc, emc.emc.options.destPath))
+      files = files.concat(@_filesForModule(module, destPath))
 
     files
 
   # @nodoc
-  _filesForEmc: (emc, path) ->
-    formats = emc.emc.images.copy.formats || []
+  _filesForModule: (module, destPath) ->
+    formats = module.getEmcConfig().images.copy.formats || []
 
-    result = _.map formats, (format) => @grunt.file.expand(File.join(path, "**/*.#{format}"))
+    result = _.map formats, (format) => @grunt.file.expand(File.join(destPath, "**/*.#{format}"))
     result or= []
 
     _.uniq(_.flatten(result))

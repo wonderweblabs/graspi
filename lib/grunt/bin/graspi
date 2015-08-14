@@ -23,23 +23,21 @@ var printHelp = function() {
   console.log('');
   console.log('You can set all options inside of the gruntfile with grunt.option([name..], [value..])');
   console.log('');
+  console.log('Usage:');
+  console.log('  graspi backbone-1.2.1  # run graspi with env_name development and task_name build');
+  console.log('  graspi backbone-1.2.1 --task_name=clean --env_name=production ');
+  console.log('');
   console.log('Options:');
   console.log('');
 
 
   var flags = {
-    '--env=[env name]'                      : 'The name of the environment, e.g. \n' +
+    '--env_name=[env name]'                      : 'The name of the environment, e.g. \n' +
                                                '--env=production\n' +
                                                ' \n' +
                                                'Default: --env=development',
 
-    '--module=[mod name]'                   : 'The name of the module to run, e.g. \n' +
-                                              '--module=cmi\n' +
-                                               ' \n' +
-                                               'Default: null and will raise an error if ' +
-                                               'it stays null.',
-
-    '--task=[task name]'                    : 'The name of the task to run, e.g. \n' +
+    '--task_name=[task name]'                    : 'The name of the task to run, e.g. \n' +
                                               '--task=clean\n' +
                                                ' \n' +
                                                'Default: --task=build',
@@ -51,32 +49,18 @@ var printHelp = function() {
                                               'inside a large json file. You can control ' +
                                               'the location of that file with this parameter.',
 
-    '--cached=[true/false]'                 : 'Completly turn on/off task caching. This ' +
-                                              'flag is especially for developing purposes ' +
-                                              'since you can control the caching behavior ' +
-                                              'with the config files.' +
+    '--cached=[true/false]'                 : 'Completly off task caching with false. This ' +
+                                              'flag is especially for full build purposes ' +
+                                              'since you can control to turn off the ' +
+                                              'caching behavior of modules.' +
                                               ' \n' +
                                               ' \n' +
-                                              'Default: --cached=null',
-
-    '--cachedDeps=[true/false]'             : 'Completly turn on/off task caching of the ' +
-                                              'dependencies of the current task. Same behavior ' +
-                                              'like with the cached flag.' +
-                                              ' \n' +
-                                              ' \n' +
-                                              'Default: --cachedDeps=null',
+                                              'Default: --cached=true',
 
     '--resolveDeps=[true/false]'            : 'Control dependencies should be resolved. ' +
                                               ' \n' +
                                               ' \n' +
                                               'Default: --resolveDeps=true',
-
-    '--includeDeps=[true/false]'            : 'Control if to include the dependency files ' +
-                                              'into the destination file of the current ' +
-                                              'task. Same behavior like with cached.' +
-                                              ' \n' +
-                                              ' \n' +
-                                              'Default: --includeDeps=null',
 
     '--depsTask=[null/String]'              : 'The task to run the dependencies with. This might' +
                                               'be helpful for running e.g. you task for css but ' +
@@ -146,7 +130,9 @@ if(_.any(argv, function(arg){ return arg == '--help'; })) {
   var exec  = require('child_process').exec;
   var spawn = require('child_process').spawn;
 
-  var args = ['graspi'].concat(userArgs)
+  var args = ['graspi'].concat(userArgs);
+  args[1] = '--mod_name=' + args[1];
+
   var g = spawn('grunt', args, { cwd: basedir });
 
   g.stdout.on('data', function (data) {

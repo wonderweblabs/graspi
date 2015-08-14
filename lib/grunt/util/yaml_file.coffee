@@ -1,9 +1,17 @@
-_         = require('lodash')
-YamlFile  = require './class/yaml_file'
+_ = require('lodash')
 
-obj = null
+module.exports = class YamlFileHandler
 
-module.exports = (grunt) ->
-  obj = new YamlFile(grunt) unless _.isObject(obj)
+  constructor: (@grunt) ->
 
-  return obj
+  read: (file) ->
+    return {} unless @grunt.file.exists(file)
+
+    try
+      yaml = @grunt.file.readYAML(file, { encoding: 'utf-8' })
+      yaml or= {}
+      yaml = {} unless _.isObject(yaml)
+
+      return yaml
+    catch e
+      return {}

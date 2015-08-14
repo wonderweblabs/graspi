@@ -1,9 +1,25 @@
-_         = require('lodash')
-JsonFile  = require './class/json_file'
+_ = require 'lodash'
 
-obj = null
+module.exports = class JsonFileHandler
 
-module.exports = (grunt) ->
-  obj = new JsonFile(grunt) unless _.isObject(obj)
+  constructor: (@grunt) ->
 
-  return obj
+  read: (file) ->
+    return {} unless @grunt.file.exists(file)
+
+    try
+      json = @grunt.file.readJSON(file, { encoding: 'utf-8' })
+      json or= {}
+      json = {} unless _.isObject(json)
+
+      return json
+    catch e
+      return {}
+
+  write: (file, json, prettyPrint = true) ->
+    return unless _.isObject(json)
+
+    spaces  = if prettyPrint == true then 4 else 0
+    json    = JSON.stringify(json, null, spaces)
+
+    @grunt.file.write(file, json, { encoding: 'utf-8' })

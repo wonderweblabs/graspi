@@ -12,8 +12,8 @@ FCT   = require('../util/file_change_tracker')
 # * getFileCache                > file_change_tracker
 # * getConfig                   > @getEmc().emc
 # * getAppConfig                > @getEmc().emc.options
-# * getEnvName                  > @options.env_name
-# * getModName                  > @options.mod_name
+# * getEnvName                  > @getModule().getEnvName()
+# * getModName                  > @getModule().getModName()
 # * getTmpPath                  > tmp folder > default: tmpPath + env_name + mod_name
 # * getDestPath                 > dest folder
 # * getBasePath                 > src folder
@@ -32,8 +32,8 @@ module.exports = class AbstractTaskHelper
   # If the task should run under cache conditions
   cached: true
 
-  # Appendix for cache key "#{@options.env_name}-#{@options.mod_name}"
-  # e.g. "#{@options.env_name}-#{@options.mod_name}-test" would be configured
+  # Appendix for cache key "#{@getEnvName()}-#{@getModName()}"
+  # e.g. "#{@getEnvName()}-#{@getModName()}-test" would be configured
   # with cacheKeyAppendix: 'test'
   cacheKeyAppendix: null
 
@@ -49,17 +49,13 @@ module.exports = class AbstractTaskHelper
 
   #
   # Options:
-  # * env_name (req)
-  # * mod_name (req)
   # * task_name
-  # * main_task_name
+  # * wrapping_task_name
   # * resolveDeps [null/true/false]
   # * depsTask
-  # * depsCaching [null/true/false]
-  # * emc
   # * cached [true/false]
   #
-  constructor: (@grunt, @options) ->
+  constructor: (@grunt, @module, @options) ->
 
   # whether run should return or execute
   isEnabled: ->
@@ -76,6 +72,10 @@ module.exports = class AbstractTaskHelper
   isCacheValid: ->
     false
 
+  # whether to include the dependency files
+  includeDependencies: ->
+    @getModule().getEmcConfig().includeDependencies == true
+
 
   # To execute tasks
   getTaskRunner: ->
@@ -85,13 +85,17 @@ module.exports = class AbstractTaskHelper
   getFileCache: ->
     @grunt.graspi.config.getFileCacheTracker(@getEmc())
 
+  # module
+  getModule: ->
+    @module
+
   # EMC
   getEmc: ->
-    @options.emc
+    @getModule().getEmc()
 
   # EMC
   getConfig: ->
-    @options.emc.emc
+    @getEmc().emc
 
   # EMC.options (app config)
   getAppConfig: ->
@@ -99,11 +103,11 @@ module.exports = class AbstractTaskHelper
 
   # Environment
   getEnvName: ->
-    @options.env_name
+    @getModule().getEnvName()
 
   # Module
   getModName: ->
-    @options.mod_name
+    @getModule().getModName()
 
   # Task
   getTaskName: ->
@@ -111,7 +115,7 @@ module.exports = class AbstractTaskHelper
 
   # App tmp path
   getTmpPath: ->
-    File.join(@getConfig().tmpPath, @options.env_name, @options.mod_name)
+    File.join(@getConfig().tmpPath, @getEnvName(), @getModName())
 
   # Module destination path
   getDestPath: (emc = null) ->
@@ -158,6 +162,12 @@ module.exports = class AbstractTaskHelper
   # The appendix for the grunt task target
   getGruntTaskTargetAppendix: ->
     _.result @, 'gruntTaskTargetAppendix'
+
+  # build a dependency modules list
+  getModuleDependencies: (options = {}) ->
+    includeSelf = if _.isBoolean(options.includeSelf) then options.includeSelf else false
+
+    @getModule().resolveDependencyTree([], [], includeSelf)
 
 
   # Check file for changes

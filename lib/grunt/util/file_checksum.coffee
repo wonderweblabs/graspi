@@ -1,11 +1,22 @@
-fs            = require 'fs'
-crypto        = require 'crypto'
-_             = require './lodash_extensions'
-FileChecksum  = require './class/file_checksum'
+_      = require 'lodash'
+Fs     = require 'fs'
+Crypto = require 'crypto'
 
-fc = null
+module.exports = class FileChecksum
 
-module.exports = (grunt) ->
-  fc = new FileChecksum(fs, crypto, grunt) unless _.isObject(fc)
+  constructor: (@grunt) ->
 
-  return fc
+  hexDigest: (file, length = 64, algorithm = 'sha256') ->
+    return null unless @grunt.file.exists(file)
+    return null unless @grunt.file.isFile(file)
+
+    hash = Crypto.createHash(algorithm).update(Fs.readFileSync(file)).digest('hex')
+
+    hash.slice(0, length)
+
+  stringHexDigest: (str, length = 64, algorithm = 'sha256') ->
+    return null unless _.isString(str)
+
+    hash = Crypto.createHash(algorithm).update(str).digest('hex')
+
+    hash.slice(0, length)

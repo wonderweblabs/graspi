@@ -18,7 +18,9 @@ module.exports = class TaskHelper extends require('./abstract')
       return false if memo == false
 
       file = File.join(@getBasePath(), file)
+      console.log file, @grunt.file.isFile(file)
       return !@fileCacheHasChanged(file) if @grunt.file.isFile(file)
+      console.log file, @grunt.file.isFile(file)
 
       _.inject @grunt.file.expand(file), true, (subMemo, subFile) =>
         if subMemo == false then false else !@fileCacheHasChanged(subFile)

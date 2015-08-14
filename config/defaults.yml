@@ -7,6 +7,9 @@ cacheFile: 'tmp/graspi/files_cache_register.json'
 # graspi tasks built track file
 modulesBuiltTrackFile: 'tmp/graspi/modules_built_track_register.json'
 
+# include dependency files
+includeDependencies: false
+
 # for certain disabling features
 webcomponent: false
 
@@ -24,7 +27,6 @@ css:
   # grunt-concat-sourcemap
   concat:
     cached:             true
-    includeDependencies: false
   # grunt-contrib-copy
   copy:
     cached:             true
@@ -106,7 +108,6 @@ js:
   # grunt-concat-sourcemap
   concat:
     cached:             true
-    includeDependencies: false
   # grunt-contrib-coffee
   coffee:
     cached:             true
@@ -151,7 +152,6 @@ images:
   # grunt-contrib-copy
   copy:
     cached:             true
-    includeDependencies: false
     formats:
       - jpeg
       - jpg
@@ -196,7 +196,6 @@ fonts:
   # grunt-contrib-copy
   copy:
     cached:             true
-    includeDependencies: false
     formats:
       - eot
       - woff
@@ -224,7 +223,6 @@ templates:
   # grunt-concat-sourcemap
   concat:
     cached:             true
-    includeDependencies: false
 
 # ------------------------------------------------------
 # webcomponents
@@ -233,7 +231,6 @@ webcomponents:
   # grunt-concat-sourcemap
   concat:
     cached:             true
-    includeDependencies: false
 
 # ------------------------------------------------------
 # replace

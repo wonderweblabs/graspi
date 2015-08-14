@@ -1,13 +1,18 @@
-_       = require 'lodash'
-File    = require 'path'
-FCT     = require('../file_change_tracker')
+_           = require 'lodash'
+File        = require 'path'
+FCT         = require './util/file_change_tracker'
+BCT         = require './util/build_cache_tracker'
+UserConfig  = require './util/user_config'
+Module      = require './module'
 
 module.exports = class GraspiConfig
 
   constructor: (@grunt, @config) ->
     [@env_names, @mod_names] = @_buildSmallMapping()
 
-    @_fileCacheTrackers = {}
+    @_fileCacheTrackers   = {}
+    @_buildCacheTrackers  = {}
+    @_environments        = {}
 
   getRootPath: ->
     @grunt.option('root')
@@ -55,6 +60,13 @@ module.exports = class GraspiConfig
 
     @_fileCacheTrackers[emc.emc.cacheFile] or= @_buildFileCacheTracker(emc)
 
+  getBuildCacheTracker: (emc) ->
+    return null unless _.isObject(emc)
+    return null unless _.isObject(emc.emc)
+    return null unless _.isString(emc.emc.modulesBuiltTrackFile)
+
+    @_buildCacheTrackers[emc.emc.modulesBuiltTrackFile] or= @_buildBuildCacheTracker(emc)
+
   getDestPath: (emc) ->
     File.join(@getDestBasePath(emc), @getDestFolder(emc))
 
@@ -84,6 +96,13 @@ module.exports = class GraspiConfig
       mod_name: mod_name
       emc: mod
     }
+
+  getModule: (env_name, mod_name) ->
+    @_environments[env_name] or= {}
+    @_environments[env_name][mod_name] or= @_buildModule(env_name, mod_name)
+
+  getUserConfig: ->
+    @_userConfig or= new UserConfig(@grunt, @getRootPath())
 
   eachEmc: (target_env_name = null, target_mod_name = null, callback) ->
     return unless _.isFunction(callback)
@@ -121,6 +140,12 @@ module.exports = class GraspiConfig
       @grunt.log.ok "Save cache - #{fct.getFilePath()}"
       fct.persist()
 
+  saveBuildCacheTrackers: ->
+    _.each @_buildCacheTrackers, (bct) =>
+      @grunt.log.ok "Save build cache - #{bct.getFilePath()}"
+      bct.persist()
+
+
   # ----------------------------------------------------------
   # private
 
@@ -135,9 +160,16 @@ module.exports = class GraspiConfig
 
   # @nodoc
   _buildFileCacheTracker: (emc) ->
-    FCT(@grunt, emc.emc.cacheFile)
+    new FCT(@grunt, emc.emc.cacheFile)
 
+  # @nodoc
+  _buildBuildCacheTracker: (emc) ->
+    new BCT(@grunt, emc.emc.modulesBuiltTrackFile)
 
-
-
+  # @nodoc
+  _buildModule: (env_name, mod_name) ->
+    new Module(@grunt, {
+      env_name: env_name
+      mod_name: mod_name
+    })
 

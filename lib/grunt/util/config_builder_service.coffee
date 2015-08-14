@@ -1,8 +1,19 @@
 _       = require 'lodash'
 File    = require 'path'
-Config  = require './config'
+JF      = require './json_file'
+YF      = require './yaml_file'
+FCT     = require './file_change_tracker'
+Config  = require '../config'
 
-module.exports = class GraspiConfigBuilder
+# ----------------------------------------------------------------
+# export
+# ----------------------------------------------------------------
+module.exports = (grunt) -> new GraspiConfigBuilder(grunt)
+
+class GraspiConfigBuilder
+
+  build: ->
+    @configure()
 
   constructor: (@grunt) ->
 
@@ -13,16 +24,16 @@ module.exports = class GraspiConfigBuilder
     @grunt.option('configLoadPaths')
 
   getJsonFileHandler: ->
-    @_jsonFileHandler or= require('../json_file')(@grunt)
+    @_jsonFileHandler or= new JF(@grunt)
 
   getYamlFileHandler: ->
-    @_yamlFileHandler or= require('../yaml_file')(@grunt)
+    @_yamlFileHandler or= new YF(@grunt)
 
   getFileChangeTracker: ->
     file = @getConfigCacheFile().replace(/\.yml$/, '')
     file += '-cfg.yml'
 
-    @_fileChangeTracker or= require('../file_change_tracker')(@grunt, file)
+    @_fileChangeTracker or= new FCT(@grunt, file)
 
   configure: ->
     @prepareConfigInstance(@load())
@@ -233,4 +244,8 @@ module.exports = class GraspiConfigBuilder
     _.inject files, false, (memo, file) =>
       return memo if memo == true
       @getFileChangeTracker().hasChanged(file, 'configFiles')
+
+
+
+
 
