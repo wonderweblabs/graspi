@@ -59,7 +59,8 @@ module.exports = class TaskHelper extends require('./abstract')
 
     _.each files, (path) =>
       f = @getMapping()[path]
-      @grunt.file.delete(f) if f && f != path && @grunt.file.exists(f)
+      if f && f != path && @grunt.file.exists(f)
+        @grunt.file.delete(f, { force: true })
 
   createRevisionFiles: (files) ->
     _.each files, (path) =>

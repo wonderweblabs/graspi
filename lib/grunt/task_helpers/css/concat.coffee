@@ -36,7 +36,10 @@ module.exports = class TaskHelper extends require('./abstract')
     files.concat @grunt.file.expand(File.join(@getTmpPath(), '**/*.css'))
 
   buildConfig: ->
-    @grunt.file.delete(@getDestFilePath()) if @grunt.file.exists(@getDestFilePath())
+    if @grunt.file.exists(@getDestFilePath())
+      @grunt.file.delete(@getDestFilePath(), {
+        force: true
+      })
 
     files = @getCssFiles()
 

@@ -45,7 +45,7 @@ module.exports = class TaskHelper extends require('./abstract')
         if @fileCacheHasChanged(file)
           resultFile = file.replace(@getBasePath(), '')
           resultFile = File.join(@getTmpPath(), resultFile)
-          @grunt.file.delete(resultFile) if @grunt.file.exists(resultFile)
+          @grunt.file.delete(resultFile, { force: true }) if @grunt.file.exists(resultFile)
 
           @fileCacheUpdate(file)
           true

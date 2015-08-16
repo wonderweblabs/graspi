@@ -36,7 +36,7 @@ module.exports = class TaskHelper extends require('./abstract')
     files.concat @grunt.file.expand(File.join(@getTmpPath(), '**/*.js'))
 
   buildConfig: ->
-    @grunt.file.delete(@getDestFilePath()) if @grunt.file.exists(@getDestFilePath())
+    @grunt.file.delete(@getDestFilePath(), { force: true }) if @grunt.file.exists(@getDestFilePath())
 
     files = @getJsFiles()
 
