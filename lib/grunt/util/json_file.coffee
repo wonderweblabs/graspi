@@ -7,14 +7,11 @@ module.exports = class JsonFileHandler
   read: (file) ->
     return {} unless @grunt.file.exists(file)
 
-    try
-      json = @grunt.file.readJSON(file, { encoding: 'utf-8' })
-      json or= {}
-      json = {} unless _.isObject(json)
+    json = @grunt.file.readJSON(file, { encoding: 'utf-8' })
+    json or= {}
+    json = {} unless _.isObject(json)
 
-      return json
-    catch e
-      return {}
+    return json
 
   write: (file, json, prettyPrint = true) ->
     return unless _.isObject(json)
