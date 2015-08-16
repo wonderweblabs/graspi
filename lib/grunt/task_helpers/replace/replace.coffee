@@ -57,9 +57,7 @@ module.exports = class TaskHelper extends require('./abstract')
     cfg
 
   getFiles: (replaceConfig) ->
-    return @_files if _.isArray(@_files)
-
-    @_files = _.map (replaceConfig.files || []), (file) => @replacePlaceholders(file)
+    _.map (replaceConfig.files || []), (file) => @replacePlaceholders(file)
 
   replacePlaceholders: (str = '') ->
     results = _.uniq(str.match(/\%\%[a-zA-Z0-9]*\%\%/g) || [])
