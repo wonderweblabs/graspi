@@ -63,6 +63,8 @@ module.exports = class TaskHelper extends require('./abstract')
 
   createRevisionFiles: (files) ->
     _.each files, (path) =>
+      return unless @grunt.file.isFile(path)
+
       if @withDigest() == true
         newPath = @_digestPath(path)
         @grunt.file.copy(path, newPath)
