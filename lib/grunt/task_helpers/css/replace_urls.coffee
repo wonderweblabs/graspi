@@ -51,7 +51,7 @@ module.exports = class TaskHelper extends require('./abstract')
       p.match = new RegExp(pattern.pattern, pattern.modifiers)
       p.replacement = (match) =>
         match   = match[0] if _.isArray(match)
-        result  = match.match(new RegExp(pattern.pattern))
+        result  = (new RegExp(pattern.pattern)).exec(match)
         file    = result[1] if _.isArray(result) && _.isString(result[1])
 
         # params
@@ -68,11 +68,11 @@ module.exports = class TaskHelper extends require('./abstract')
         path.push params if params.length > 0
         path = path.join('?')
 
-        return "url('/#{path}')" if _.isEmpty(@getAssetHost())
+        return "url(\"/#{path}\")" if _.isEmpty(@getAssetHost())
 
         host = @getAssetHost().replace(/\/$/, '')
 
-        "url('#{host}/#{path}')"
+        "url(\"#{host}/#{path}\")"
 
       cfg.options.patterns.push p
 

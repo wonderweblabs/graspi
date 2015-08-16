@@ -190,13 +190,16 @@ class GraspiConfigBuilder
       envConfig = _.mergeRecursive(envConfig, config)
       finalConfig.environments[env_name].defaults = envConfig
 
-      # merge modules
-      e = finalConfig.environments[env_name]
-      _.each Object.keys(e.modules), (mod_name) =>
-        e.modules[mod_name] = _.mergeRecursive(e.modules[mod_name], envConfig)
+      # modules
+      modules = {}
+
+      _.each finalConfig.environments[env_name].modules, (mod, mod_name) =>
+        modules[mod_name] = {}
+        modules[mod_name].environments  = {}
+        modules[mod_name].environments[env_name] = _.clone(env, true)
 
       # merge modules
-      @_mergeModules(_.clone(env.modules || {}), finalConfig)
+      @_mergeModules(modules, finalConfig)
 
   # @nodoc
   _mergeModules: (modules, finalConfig) ->
