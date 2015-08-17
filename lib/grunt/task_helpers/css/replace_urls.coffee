@@ -68,11 +68,11 @@ module.exports = class TaskHelper extends require('./abstract')
         path.push params if params.length > 0
         path = path.join('?')
 
-        return "url(\"/#{path}\")" if _.isEmpty(@getAssetHost())
+        return "url('/#{path}')" if _.isEmpty(@getAssetHost())
 
         host = @getAssetHost().replace(/\/$/, '')
 
-        "url(\"#{host}/#{path}\")"
+        "url('#{host}/#{path}')"
 
       cfg.options.patterns.push p
 
