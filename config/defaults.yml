@@ -268,11 +268,19 @@ postpipeline:
     options:
       assetHost:    undefined
       cssPatterns:
-        - pattern: 'image\-url\([QUOTES1QUOTES2]?([^\s;]*)[QUOTES1QUOTES2]?\)'
+        - pattern: 'image\-url\([QUOTES1QUOTES2]([^\s;]*)[QUOTES1QUOTES2]\)'
           modifiers: 'g'
           quotesPlaceholder: 'QUOTES1'
           doubleQuotesPlaceholder: 'QUOTES2'
-        - pattern: 'font\-url\([QUOTES1QUOTES2]?([^\s;]*)[QUOTES1QUOTES2]?\)'
+        - pattern: 'image\-url\(([^\s;QUOTES1QUOTES2]*)\)'
+          modifiers: 'g'
+          quotesPlaceholder: 'QUOTES1'
+          doubleQuotesPlaceholder: 'QUOTES2'
+        - pattern: 'font\-url\([QUOTES1QUOTES2]([^\s;]*)[QUOTES1QUOTES2]\)'
+          modifiers: 'g'
+          quotesPlaceholder: 'QUOTES1'
+          doubleQuotesPlaceholder: 'QUOTES2'
+        - pattern: 'font\-url\(([^\s;QUOTES1QUOTES2]*)\)'
           modifiers: 'g'
           quotesPlaceholder: 'QUOTES1'
           doubleQuotesPlaceholder: 'QUOTES2'
