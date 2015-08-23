@@ -137,6 +137,9 @@ module.exports = class Module
 
   # @nodoc
   _buildDependencies: ->
+    if _.isEmpty(@getEmc()) || _.isEmpty(@getEmc().emc)
+      @grunt.fail.fatal "Missing config for module #{@getModName()} in env #{@getEnvName()}"
+
     @_dependencies = _.map (@getEmc().emc.dependencies || []), (mod_name) =>
       @grunt.graspi.config.getModule(@getEnvName(), mod_name)
 
