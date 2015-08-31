@@ -73,9 +73,10 @@ module.exports = class GraspiConfig
   getDestBasePath: (emc) ->
     emc = emc.emc || {}
 
-    path = emc.options.destPath if _.isObject(emc.options)
+    path = if emc.webcomponent == true then emc.destPathWC else emc.destPath
+    path = emc.options.destPath if _.isObject(emc.options) && _.isString(emc.options.destPath)
 
-    path || emc.destPath
+    path
 
   getDestFolder: (emc) ->
     emc = emc.emc || {}

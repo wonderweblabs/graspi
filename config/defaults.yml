@@ -16,6 +16,9 @@ webcomponent: false
 # default destination path
 destPath: 'tmp/graspi/build'
 
+# default destination path for webcomponents
+destPathWC: 'tmp/graspi/build'
+
 # default destination folder > will be concatinated
 # to destPath
 destFolder: ''
@@ -231,6 +234,10 @@ webcomponents:
   # grunt-concat-sourcemap
   concat:
     cached:             true
+  # custom implementation
+  bower:
+    cwd:      ''
+    jsonPath: 'bower.json'
 
 # ------------------------------------------------------
 # replace

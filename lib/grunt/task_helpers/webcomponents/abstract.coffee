@@ -5,12 +5,9 @@ module.exports = class AbstractTaskHelper extends require('../abstract')
 
   cacheKeyAppendix: 'webcomponents'
 
-  enabled: -> _.isObject(@getAppConfig().webcomponents)
+  enabled: -> @getConfig().webcomponent == true
 
   # ------------------------------------------------------------
 
   getBasePath: ->
-    @getAppConfig().webcomponents.basePath || super()
-
-  getDestFile: ->
-    File.join(@getDestPath(), @getAppConfig().webcomponents.destFile)
+    @getAppConfig().basePath || super()
